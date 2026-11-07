@@ -12,26 +12,38 @@
 }
 
 body {
-  color: hsl(var(--foreground));
-  background-color: #09090b;
+  color: #f4f4f5;
+  background-color: #070709;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
 }
 
-/* Subtle cyber background grid */
-.bg-grid-pattern {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+.font-editorial {
+  font-family: "Newsreader", "Instrument Serif", "Playfair Display", "Georgia", "Cambria", serif;
+  font-style: italic;
+  font-weight: 400;
 }
 
-.glow-accent {
-  box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.25);
+/* Atmospheric mountain dawn background */
+.hero-atmosphere {
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56, 189, 248, 0.18), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(245, 158, 11, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(16, 185, 129, 0.08), transparent 60%),
+    linear-gradient(180deg, #090e17 0%, #0c1322 35%, #080c14 70%, #070709 100%);
 }
 
-.glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+/* Frosted Glass Pill */
+.glass-pill {
+  background: rgba(18, 24, 38, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glow-card {
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Custom scrollbars */
@@ -40,7 +52,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #070709;
 }
 ::-webkit-scrollbar-thumb {
   background: #27272a;
