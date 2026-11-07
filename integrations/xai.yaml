@@ -1,0 +1,17 @@
+schema_version: "1.0"
+name: "xai"
+version: "1.0.0"
+title: "Axiomatic xAI & Auto-Remediation Doctor"
+description: "Integrated Gradients, SVD representation rank, 2D loss landscape flatness, Grad-CAM, attention rollout, and agent auto-remediation prescriptions."
+category: "interpretability"
+ui_tab: "xai"
+config:
+  default_steps: 50
+  auto_remediation: true
+  loss_landscape_grid: 15
+sdk_exports:
+  - "sentinel.xai.integrated_gradients"
+  - "sentinel.xai.spectral_rank"
+  - "sentinel.xai.grad_cam"
+  - "sentinel.xai.attention_rollout"
+  - "sentinel.xai.loss_landscape"

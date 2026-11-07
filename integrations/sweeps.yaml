@@ -1,0 +1,12 @@
+schema_version: "1.0"
+name: "sweeps"
+version: "1.0.0"
+title: "Optuna ASHA Hyperparameter Sweeps"
+description: "Asynchronous Successive Halving (ASHA) sweeps, multi-trial parallel orchestration, and parameter importance estimation."
+category: "optimization"
+ui_tab: "sweeps"
+config:
+  default_pruner: "asha"
+  default_workers: 4
+sdk_exports:
+  - "sentinel.sweeps.asha_study"

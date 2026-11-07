@@ -1,0 +1,13 @@
+schema_version: "1.0"
+name: "gradient-flow"
+version: "1.0.0"
+title: "Interactive Gradient Flow & Neuron Tracing"
+description: "Real-time forward and backward gradient flow inspection, vanishing/exploding gradient alerts, and neuron path visualization."
+category: "observability"
+ui_tab: "flow"
+config:
+  sample_rate_steps: 10
+  saturation_threshold: 0.95
+sdk_exports:
+  - "sentinel.flow.stream_gradients"
+  - "sentinel.flow.trace_neurons"
