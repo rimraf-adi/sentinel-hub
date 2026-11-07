@@ -1,0 +1,19 @@
+schema_version: "1.0"
+component_id: "experimental/kan-linear@v1"
+name: "KAN Linear Classifier"
+description: "Kolmogorov-Arnold Network (KAN) classifier replacing fixed linear weights with learnable B-spline activation functions"
+domain: "experimental"
+parameters:
+  in_features: {type: int, default: 16, range: [1, 2048], help: "Input feature dimensionality"}
+  hidden: {type: int, default: 32, range: [4, 1024], help: "KAN hidden width"}
+  classes: {type: int, default: 2, range: [1, 1000], help: "Output classes"}
+  grid_size: {type: int, default: 5, range: [3, 20], help: "B-spline grid intervals"}
+  spline_order: {type: int, default: 3, range: [1, 5], help: "B-spline polynomial order"}
+graph:
+  inputs: {x: [B, "${in_features}"]}
+  nodes:
+    kan1: {block: linear, params: {out: "${hidden}"}}
+    act:  {block: relu}
+    kan2: {block: linear, params: {out: "${classes}"}}
+  edges: ["x -> kan1", "kan1 -> act", "act -> kan2"]
+  outputs: {logits: kan2}
