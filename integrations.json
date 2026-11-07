@@ -1,14 +1,15 @@
 {
   "registry_version": "1.0",
   "space": "sentinel-hub",
-  "updated_at": "2026-11-07T19:28:00Z",
+  "updated_at": "2026-11-07T20:00:00Z",
   "integrations": [
     {
       "name": "xai",
       "version": "1.0.0",
       "category": "interpretability",
-      "title": "Axiomatic xAI & Auto-Remediation Doctor",
-      "description": "Integrated Gradients, SVD representation rank, 2D topological loss landscape flatness, Grad-CAM, attention rollout, and agent auto-remediation prescriptions.",
+      "title": "Explainability and Remediation",
+      "description": "Integrated Gradients, Grad-CAM, attention rollout, and suggested fixes for training problems",
+      "command": "sentinel pack add xai",
       "ui_tab": "xai",
       "file": "integrations/xai.yaml"
     },
@@ -16,8 +17,9 @@
       "name": "gradient-flow",
       "version": "1.0.0",
       "category": "observability",
-      "title": "Interactive Gradient Flow & Neuron Tracing",
-      "description": "Real-time forward and backward gradient flow inspection, vanishing/exploding gradient alerts, and neuron path visualization.",
+      "title": "Gradient Flow",
+      "description": "Live gradient inspection with alerts for vanishing and exploding layers",
+      "command": "sentinel pack add gradient-flow",
       "ui_tab": "flow",
       "file": "integrations/gradient-flow.yaml"
     },
@@ -25,8 +27,9 @@
       "name": "sweeps",
       "version": "1.0.0",
       "category": "optimization",
-      "title": "Optuna ASHA Hyperparameter Sweeps",
-      "description": "Asynchronous Successive Halving (ASHA) sweeps, multi-trial parallel orchestration, and parameter importance estimation.",
+      "title": "Hyperparameter Sweeps",
+      "description": "Parallel Optuna ASHA trials with early stopping and parameter importance",
+      "command": "sentinel pack add sweeps",
       "ui_tab": "sweeps",
       "file": "integrations/sweeps.yaml"
     },
@@ -34,19 +37,21 @@
       "name": "eval-guard",
       "version": "1.0.0",
       "category": "governance",
-      "title": "EvalGuard: Policy & Regression Gatekeeper",
-      "description": "Continuous validation checks, slice metrics, fairness evaluation, and corporate ML compliance gates.",
+      "title": "EvalGuard",
+      "description": "Regression checks, slice metrics, and fairness gates before release",
+      "command": "sentinel pack add eval-guard",
       "ui_tab": "eval-guard",
       "file": "integrations/eval-guard.yaml"
     },
     {
-      "name": "tensorrt-export",
+      "name": "export-quantization",
       "version": "1.0.0",
       "category": "deployment",
-      "title": "ONNX Runtime & TensorRT Exporter",
-      "description": "Automated conversion to ONNX, FP16/INT8 post-training quantization, and TensorRT engine compilation.",
+      "title": "Export and Quantization",
+      "description": "ONNX conversion, FP16 and INT8 quantization, TensorRT engines",
+      "command": "sentinel pack add export-quantization",
       "ui_tab": "export",
-      "file": "integrations/tensorrt-export.yaml"
+      "file": "integrations/export-quantization.yaml"
     }
   ]
 }

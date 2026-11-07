@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import registryData from "../registry.json";
 import integrationsData from "../integrations.json";
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 import { 
   Search, 
   Terminal, 
@@ -15,10 +18,16 @@ import {
   Github, 
   X,
   Boxes,
-  Compass,
-  ArrowUpRight
+  ArrowRight,
+  Layers,
+  Activity,
+  ShieldCheck,
+  Cpu,
+  BarChart3,
+  Sliders,
+  Sparkles,
+  Download
 } from "lucide-react";
-import { Logo } from "./components/Logo";
 
 type Module = {
   id: string;
@@ -28,8 +37,6 @@ type Module = {
   path: string;
   description: string;
   tags?: string[];
-  nodes?: number;
-  edges?: number;
 };
 
 type Integration = {
@@ -38,6 +45,7 @@ type Integration = {
   category: string;
   title: string;
   description: string;
+  command?: string;
   ui_tab?: string;
   file?: string;
 };
@@ -45,7 +53,6 @@ type Integration = {
 export default function HubHome() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
-  const [timeFilter, setTimeFilter] = useState<string>("24h");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -58,25 +65,7 @@ export default function HubHome() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const domainCounts = useMemo(() => {
-    const counts: Record<string, number> = {
-      all: modules.length,
-      vision: 0,
-      sequence: 0,
-      tabular: 0,
-      generative: 0,
-      graph: 0,
-      integrations: integrations.length,
-    };
-    modules.forEach((m) => {
-      const d = m.domain.toLowerCase();
-      if (counts[d] !== undefined) counts[d]++;
-    });
-    return counts;
-  }, [modules, integrations]);
-
   const filteredModules = useMemo(() => {
-    if (activeTab === "integrations") return [];
     return modules.filter((m) => {
       const matchesTab = activeTab === "all" || m.domain.toLowerCase() === activeTab;
       const q = search.toLowerCase();
@@ -91,21 +80,7 @@ export default function HubHome() {
     });
   }, [modules, activeTab, search]);
 
-  const filteredIntegrations = useMemo(() => {
-    if (activeTab !== "all" && activeTab !== "integrations") return [];
-    return integrations.filter((i) => {
-      const q = search.toLowerCase();
-      return (
-        !q ||
-        i.name.toLowerCase().includes(q) ||
-        i.title.toLowerCase().includes(q) ||
-        i.description.toLowerCase().includes(q) ||
-        i.category.toLowerCase().includes(q)
-      );
-    });
-  }, [integrations, activeTab, search]);
-
-  const getDomainColor = (domain: string) => {
+  const getDomainBadge = (domain: string) => {
     switch (domain.toLowerCase()) {
       case "vision":
         return "text-sky-400 bg-sky-500/10 border-sky-500/20";
@@ -123,10 +98,12 @@ export default function HubHome() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#070709] text-zinc-100 selection:bg-sky-500/20 selection:text-white">
-      {/* Hero Atmosphere Container */}
-      <div className="relative hero-atmosphere border-b border-white/[0.06] overflow-hidden pb-12 sm:pb-20">
-        {/* Subtle Mountain Layer Graphic */}
+    <div className="flex flex-col min-h-screen bg-[#070709] text-zinc-100">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="relative hero-atmosphere border-b border-white/[0.06] overflow-hidden pt-12 sm:pt-20 pb-16 px-4 sm:px-6">
+        {/* Subtle Background Layer */}
         <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
           <svg className="w-full h-full object-cover" viewBox="0 0 1440 480" fill="none" preserveAspectRatio="none">
             <path d="M0 480L180 340L380 410L620 280L840 370L1060 290L1260 360L1440 310V480H0Z" fill="#0b1322" opacity="0.6" />
@@ -135,480 +112,564 @@ export default function HubHome() {
           </svg>
         </div>
 
-        {/* Global Navigation */}
-        <header className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Logo size={36} />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold tracking-tight text-white text-base">sentinel</span>
-                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 border border-white/[0.1]">
-                  Hub Registry
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-400 hidden sm:block">Decentralized Machine Learning Architecture Plane</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com/rimraf-adi/sentinel-hub"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-xs text-zinc-300 transition-colors font-mono"
-            >
-              <Github className="w-3.5 h-3.5" />
-              <span>GitHub</span>
-            </a>
-            <a
-              href="#publish"
-              className="px-4 py-1.5 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs transition-colors shadow-sm"
-            >
-              Publish Module
-            </a>
-          </div>
-        </header>
-
-        {/* Hero Content */}
-        <section className="relative z-10 pt-10 sm:pt-16 pb-8 px-4 sm:px-6 max-w-5xl mx-auto text-center">
-          {/* Eyebrow Badge (Style of reference) */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-white/[0.12] bg-white/[0.04] text-zinc-300 text-xs font-medium mb-8 backdrop-blur-md">
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.04] text-zinc-300 text-xs font-medium backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-            <span>Open-source infrastructure · Built for autonomous agents</span>
+            <span>Open source · Built for coding agents and ML teams</span>
           </div>
 
-          {/* Signature Headline with Editorial Serif */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-            Your <span className="font-editorial text-white/95">superpower</span> for machine learning and training
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+            Start from a template. <br className="hidden sm:inline" />
+            Build with blocks. <span className="font-editorial text-sky-200">See every run.</span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-zinc-300/80 max-w-2xl mx-auto leading-relaxed font-normal">
-            The native orchestration plane for autonomous coding agents &amp; deep learning teams to design declarative neural architectures, monitor live gradient flow, and diagnose model anomalies with zero cloud lock-in.
+          {/* Subhead */}
+          <p className="text-base sm:text-lg text-zinc-300/85 max-w-2xl mx-auto leading-relaxed font-normal">
+            Sentinel is a lightweight control plane for ML training. Define models as modular graphs, run them on your own hardware, and monitor training from one dashboard. No cloud account required.
           </p>
 
-          {/* Primary Action Button */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => copyToClipboard("curl -sSL https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main/install.sh | sh", "install-cta")}
-              className="w-full sm:w-auto px-7 py-3 rounded-full bg-zinc-900 text-white border border-white/[0.15] hover:bg-zinc-800 font-medium text-sm transition-all shadow-xl flex items-center justify-center gap-2"
+          {/* Primary & Secondary CTAs */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="#install"
+              className="w-full sm:w-auto px-7 py-3 rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
             >
-              <Terminal className="w-4 h-4 text-sky-400" />
-              <span>{copiedId === "install-cta" ? "Copied Install Script!" : "Install Sentinel CLI"}</span>
-            </button>
+              <Terminal className="w-4 h-4 text-zinc-900" />
+              <span>Install Sentinel</span>
+            </a>
 
             <a
-              href="#registry"
-              className="w-full sm:w-auto px-6 py-3 rounded-full text-zinc-300 hover:text-white font-medium text-sm transition-colors flex items-center justify-center gap-1.5"
+              href="#architectures"
+              className="w-full sm:w-auto px-6 py-3 rounded-full border border-white/[0.15] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 font-medium text-sm transition-colors flex items-center justify-center gap-1.5"
             >
-              <span>Explore Architecture Catalog</span>
-              <ArrowUpRight className="w-4 h-4 text-zinc-400" />
+              <span>Browse architectures</span>
+              <ArrowRight className="w-4 h-4 text-zinc-400" />
             </a>
           </div>
 
-          {/* Floating Frosted Glass Domain Pills */}
-          <div className="mt-12 inline-flex items-center gap-1 sm:gap-2 p-1.5 rounded-full glass-pill max-w-full overflow-x-auto scrollbar-none text-xs font-medium text-zinc-300">
-            {["Vision", "Sequence", "Tabular", "Generative", "xAI Diagnostics", "Telemetry"].map((pill) => (
+          {/* Install Line */}
+          <div className="pt-4 max-w-xl mx-auto">
+            <div className="relative flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-black/60 border border-white/[0.1] font-mono text-xs text-zinc-300 shadow-inner">
+              <span className="truncate text-left text-zinc-200">
+                cargo build --release -p sentinel-cli &amp;&amp; ./target/release/sentinel dev
+              </span>
               <button
-                key={pill}
-                onClick={() => {
-                  const target = pill.toLowerCase().includes("vision") ? "vision"
-                    : pill.toLowerCase().includes("seq") ? "sequence"
-                    : pill.toLowerCase().includes("tab") ? "tabular"
-                    : pill.toLowerCase().includes("gen") ? "generative"
-                    : pill.toLowerCase().includes("xai") ? "integrations"
-                    : "all";
-                  setActiveTab(target);
-                  const el = document.getElementById("registry");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="px-3.5 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all whitespace-nowrap"
+                onClick={() => copyToClipboard("cargo build --release -p sentinel-cli && ./target/release/sentinel dev", "install-hero")}
+                className="p-1.5 rounded-lg hover:bg-white/[0.1] text-zinc-400 hover:text-white transition-colors shrink-0"
+                title="Copy install command"
               >
-                {pill}
+                {copiedId === "install-hero" ? (
+                  <Check className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
               </button>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      {/* Floating Product Dashboard */}
-      <div id="registry" className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full -mt-8 sm:-mt-12 mb-20">
-        <div className="bg-[#0b0c10] border border-white/[0.09] rounded-2xl glow-card overflow-hidden">
-          {/* Dashboard Header Bar */}
-          <div className="px-6 py-4 border-b border-white/[0.07] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/[0.02]">
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-white text-lg tracking-tight">Dashboard</span>
-              <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 border-l border-zinc-800 pl-3">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>Agent Supervisor :2512 · daemon online</span>
-              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Time Window Segmented Control */}
-            <div className="flex items-center gap-1 p-1 bg-black/40 border border-white/[0.08] rounded-lg text-xs font-medium">
-              {[
-                { id: "24h", label: "24 hours" },
-                { id: "7d", label: "7 days" },
-                { id: "30d", label: "30 days" },
-                { id: "all", label: "All time" },
-              ].map((t) => (
+      {/* Proof Strip */}
+      <section className="border-b border-white/[0.06] bg-black/40 py-8 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">15 MB</div>
+            <div className="text-xs text-zinc-400 font-medium">Daemon memory at idle</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">7 MB</div>
+            <div className="text-xs text-zinc-400 font-medium">Single binary, dashboard included</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">72</div>
+            <div className="text-xs text-zinc-400 font-medium">Built-in model blocks</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">0</div>
+            <div className="text-xs text-zinc-400 font-medium">Lock-in. Export to plain PyTorch at any time.</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Value Pillars */}
+      <section className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Designed for Performance and Autonomy
+          </h2>
+          <p className="text-sm text-zinc-400">
+            Every piece is built to give ML developers and coding agents complete control over models and hardware.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Pillar 1: Templates */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Templates</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Start from a proven architecture instead of a blank file. Ship with vision, sequence, tabular, and generative models, then save your own at the project, machine, or registry level.
+            </p>
+          </div>
+
+          {/* Pillar 2: Modular by design */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+              <Boxes className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Modular by design</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Models are graphs of reusable blocks, and blocks can be built from other blocks. Define a structure once, reuse it everywhere, and change one part without touching the rest.
+            </p>
+          </div>
+
+          {/* Pillar 3: Built-in observability */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <Activity className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Built-in observability</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Live metrics, job logs, and CPU, RAM, and GPU usage in one dashboard. Runs are stored in MLflow-compatible format, so your existing tools keep working.
+            </p>
+          </div>
+
+          {/* Pillar 4: Validated before it runs */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Validated before it runs</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Shape mismatches, invalid parameters, and loss and task conflicts are caught before training starts. Errors point to the exact block at fault.
+            </p>
+          </div>
+
+          {/* Pillar 5: No lock-in */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <Cpu className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">No lock-in</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Training runs as standard Python and PyTorch. Export any model as a standalone script with no Sentinel dependency.
+            </p>
+          </div>
+
+          {/* Pillar 6: Agent-ready */}
+          <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
+            <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <Terminal className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Agent-ready</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Every action is a CLI command or an HTTP call. Coding agents can design, launch, and inspect experiments without a custom integration.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10]">
+        <div className="max-w-6xl mx-auto space-y-12">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">How It Works</h2>
+            <p className="text-sm text-zinc-400">From template selection to zero-dependency PyTorch export in four steps.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Step 1 */}
+            <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs font-mono text-sky-400 uppercase tracking-wider font-semibold">Step 01</div>
+                <h3 className="font-bold text-white text-base">Choose a template</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Pick a model from the registry or start from your own.
+                </p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
+                <span>sentinel component list</span>
                 <button
-                  key={t.id}
-                  onClick={() => setTimeFilter(t.id)}
-                  className={`px-3 py-1 rounded-md transition-all ${
-                    timeFilter === t.id
-                      ? "bg-white/[0.12] text-white font-semibold shadow-sm"
-                      : "text-zinc-400 hover:text-zinc-200"
-                  }`}
+                  onClick={() => copyToClipboard("sentinel component list", "step1")}
+                  className="hover:text-white"
                 >
-                  {t.label}
+                  {copiedId === "step1" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* KPI Metric Strip */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-white/[0.07] bg-white/[0.01]">
-            <div className="p-5 border-r border-b lg:border-b-0 border-white/[0.07]">
-              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-1">Microkernel Memory</div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white font-mono">18.4 MB</span>
-                <span className="text-xs font-semibold text-emerald-400">↓ 98% leaner</span>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1">Native Rust vs. Python/Electron trackers</p>
             </div>
 
-            <div className="p-5 border-r-0 lg:border-r border-b lg:border-b-0 border-white/[0.07]">
-              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-1">Peak Compute Profile</div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white font-mono">22.76M</span>
-                <span className="text-xs font-semibold text-sky-400">MACs / sample</span>
+            {/* Step 2 */}
+            <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs font-mono text-purple-400 uppercase tracking-wider font-semibold">Step 02</div>
+                <h3 className="font-bold text-white text-base">Compose and configure</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Adjust blocks, loss, optimizer, and scheduler in YAML.
+                </p>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1">Compile-time validated tensor graphs</p>
-            </div>
-
-            <div className="p-5 border-r border-white/[0.07]">
-              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-1">Autograd Health</div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-emerald-400 font-mono">100%</span>
-                <span className="text-xs font-semibold text-emerald-400">Healthy</span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-1">0 Vanishing / 0 Exploding layers</p>
-            </div>
-
-            <div className="p-5">
-              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-1">Active Protocols</div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white font-mono">3 of 5</span>
-                <span className="text-xs font-semibold text-zinc-400">Active</span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-1">xai · gradient-flow · sweeps</p>
-            </div>
-          </div>
-
-          {/* Search & Domain Filter Bar */}
-          <div className="p-6 border-b border-white/[0.07] flex flex-col sm:flex-row gap-4 justify-between items-center">
-            {/* Domain Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
-              {[
-                { id: "all", label: "All Modules", count: domainCounts.all },
-                { id: "vision", label: "Vision", count: domainCounts.vision },
-                { id: "sequence", label: "Sequence", count: domainCounts.sequence },
-                { id: "tabular", label: "Tabular", count: domainCounts.tabular },
-                { id: "generative", label: "Generative", count: domainCounts.generative },
-                { id: "graph", label: "Graph", count: domainCounts.graph },
-                { id: "integrations", label: "Integrations", count: domainCounts.integrations },
-              ].map((tab) => (
+              <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
+                <span className="truncate">sentinel component show vision/vit-tiny@v1</span>
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                    activeTab === tab.id
-                      ? "bg-white text-zinc-950 font-semibold shadow-sm"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.05]"
-                  }`}
+                  onClick={() => copyToClipboard("sentinel component show vision/vit-tiny@v1", "step2")}
+                  className="hover:text-white shrink-0 ml-1"
                 >
-                  <span>{tab.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                    activeTab === tab.id ? "bg-zinc-200 text-zinc-900" : "bg-zinc-800 text-zinc-400"
-                  }`}>
-                    {tab.count}
-                  </span>
+                  {copiedId === "step2" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 </button>
-              ))}
+              </div>
             </div>
 
-            {/* Instant Search Bar */}
-            <div className="relative w-full sm:w-80 shrink-0">
-              <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            {/* Step 3 */}
+            <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">Step 03</div>
+                <h3 className="font-bold text-white text-base">Train and observe</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Sentinel assigns GPUs, runs the job, and streams metrics to the dashboard.
+                </p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
+                <span>sentinel run</span>
+                <button
+                  onClick={() => copyToClipboard("sentinel run", "step3")}
+                  className="hover:text-white"
+                >
+                  {copiedId === "step3" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs font-mono text-emerald-400 uppercase tracking-wider font-semibold">Step 04</div>
+                <h3 className="font-bold text-white text-base">Export</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Take the trained model as TorchScript or ONNX, or standalone Python script.
+                </p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
+                <span className="truncate">sentinel model export &lt;run&gt; -f onnx</span>
+                <button
+                  onClick={() => copyToClipboard("sentinel model export <run> -f onnx", "step4")}
+                  className="hover:text-white shrink-0 ml-1"
+                >
+                  {copiedId === "step4" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Registry Section: Architecture Catalog */}
+      <section id="architectures" className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">
+              Official Registry
+            </div>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Architecture catalog</h2>
+            <p className="text-sm text-zinc-400 mt-1 max-w-xl">
+              Production-ready model templates. Inspect the specification, then add one to your project with a single command.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
               <input
                 type="text"
-                placeholder="Search architectures or tags..."
+                placeholder="Search templates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 rounded-xl bg-black/50 border border-white/[0.1] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-sky-500 transition-colors font-mono"
+                className="pl-9 pr-4 py-1.5 rounded-lg bg-[#0b0c10] border border-white/[0.1] text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-sky-500 w-full sm:w-60"
               />
-              {search && (
-                <button
-                  onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
             </div>
-          </div>
 
-          {/* Catalog Grid Area */}
-          <div className="p-6">
-            {filteredModules.length > 0 && (
-              <div className="mb-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xs font-semibold tracking-wider uppercase text-zinc-400 font-mono flex items-center gap-2">
-                    <Boxes className="w-4 h-4 text-sky-400" />
-                    <span>Declarative Neural Architectures ({filteredModules.length})</span>
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredModules.map((mod) => {
-                    const addCommand = `sentinel add --module ${mod.id}`;
-                    return (
-                      <div
-                        key={mod.id}
-                        className="group border border-white/[0.07] hover:border-white/[0.18] bg-white/[0.02] hover:bg-white/[0.04] rounded-xl p-5 flex flex-col justify-between transition-all duration-200 shadow-sm"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className={`text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border ${getDomainColor(mod.domain)}`}>
-                              {mod.domain}
-                            </span>
-                            <span className="text-[11px] font-mono text-zinc-500">{mod.component_id}</span>
-                          </div>
-
-                          <h3 className="text-base font-bold text-white group-hover:text-sky-300 transition-colors mb-2">
-                            {mod.name}
-                          </h3>
-
-                          <p className="text-xs text-zinc-400 leading-relaxed mb-4 line-clamp-2">
-                            {mod.description}
-                          </p>
-
-                          {mod.tags && (
-                            <div className="flex flex-wrap gap-1.5 mb-4">
-                              {mod.tags.map((t) => (
-                                <span key={t} className="text-[10px] font-mono text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded">
-                                  #{t}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2">
-                          <button
-                            onClick={() => setSelectedModule(mod)}
-                            className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 font-mono transition-colors"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>Inspect Spec</span>
-                          </button>
-
-                          <button
-                            onClick={() => copyToClipboard(addCommand, mod.id)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-zinc-200 font-mono text-[11px] transition-colors"
-                          >
-                            {copiedId === mod.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Terminal className="w-3 h-3 text-sky-400" />}
-                            <span>{copiedId === mod.id ? "Copied" : "sentinel add"}</span>
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {filteredIntegrations.length > 0 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xs font-semibold tracking-wider uppercase text-zinc-400 font-mono flex items-center gap-2">
-                    <Compass className="w-4 h-4 text-emerald-400" />
-                    <span>Capability Packs &amp; Protocols ({filteredIntegrations.length})</span>
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredIntegrations.map((item) => {
-                    const intCommand = `sentinel integrate add ${item.name}`;
-                    return (
-                      <div
-                        key={item.name}
-                        className="group border border-emerald-500/20 hover:border-emerald-500/40 bg-emerald-500/[0.02] hover:bg-emerald-500/[0.05] rounded-xl p-5 flex flex-col justify-between transition-all duration-200"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
-                              {item.category}
-                            </span>
-                            <span className="text-[11px] font-mono text-zinc-500">v{item.version}</span>
-                          </div>
-
-                          <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors mb-2">
-                            {item.title}
-                          </h3>
-
-                          <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                            {item.description}
-                          </p>
-                        </div>
-
-                        <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-mono text-zinc-500">ui: #{item.ui_tab}</span>
-
-                          <button
-                            onClick={() => copyToClipboard(intCommand, item.name)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 font-mono text-[11px] transition-colors"
-                          >
-                            {copiedId === item.name ? <Check className="w-3 h-3 text-emerald-400" /> : <Zap className="w-3 h-3 text-emerald-400" />}
-                            <span>{copiedId === item.name ? "Copied" : "sentinel integrate"}</span>
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            <Link
+              href="/docs/templates"
+              className="text-xs text-zinc-400 hover:text-white flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-white/[0.08] hover:bg-white/[0.04] transition-colors"
+            >
+              <span>Installation Guide</span>
+              <ArrowRight className="w-3.5 h-3.5 text-zinc-500" />
+            </Link>
           </div>
         </div>
 
-        {/* Decentralized Publishing Section */}
-        <section id="publish" className="mt-16 bg-[#0b0c10] border border-white/[0.08] rounded-2xl p-6 sm:p-10 glow-card">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-xs font-mono mb-4">
-              <Share2 className="w-3 h-3" />
-              <span>Decentralized Architecture · Single Command</span>
+        {/* Domain Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.06] rounded-xl text-xs font-medium mb-8">
+          {["all", "vision", "sequence", "tabular", "generative", "graph", "experimental"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-3.5 py-1.5 rounded-lg transition-colors capitalize ${
+                activeTab === tab
+                  ? "bg-white text-zinc-950 font-semibold"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* 14 Architecture Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredModules.map((m) => (
+            <div
+              key={m.id}
+              className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] hover:border-white/[0.18] transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className={`text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full border ${getDomainBadge(m.domain)}`}>
+                    {m.domain}
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-500">{m.component_id}</span>
+                </div>
+
+                <h3 className="text-base font-bold text-white group-hover:text-sky-300 transition-colors mb-1.5">
+                  {m.name}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                  {m.description}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                <code className="text-xs font-mono text-zinc-300">
+                  sentinel add {m.id}
+                </code>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setSelectedModule(m)}
+                    className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
+                    title="Inspect specification"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => copyToClipboard(`sentinel add ${m.id}`, m.id)}
+                    className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
+                    title="Copy install command"
+                  >
+                    {copiedId === m.id ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
-              Publish directly to the community registry
-            </h2>
-            <p className="text-sm text-zinc-300 leading-relaxed mb-6 font-normal">
-              Sentinel Hub operates on an open-access protocol with zero cloud server costs. Authors and autonomous coding agents can publish new declarative modules or capability packs in one command:
+          ))}
+        </div>
+      </section>
+
+      {/* Capability Packs Section */}
+      <section id="packs" className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10]">
+        <div className="max-w-7xl mx-auto space-y-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
+                Extensions & Hooks
+              </div>
+              <h2 className="text-3xl font-extrabold text-white tracking-tight">Capability packs</h2>
+              <p className="text-sm text-zinc-400 mt-1 max-w-xl">
+                Optional modules that extend Sentinel. Install only what you need.
+              </p>
+            </div>
+
+            <Link
+              href="/docs/integrations"
+              className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/[0.08] hover:bg-white/[0.04] transition-colors self-start md:self-auto"
+            >
+              <span>Capability Packs Documentation</span>
+              <ArrowRight className="w-3.5 h-3.5 text-zinc-500" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {integrations.map((pack) => (
+              <div
+                key={pack.name}
+                className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] hover:border-white/[0.18] transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 border border-white/[0.08]">
+                      {pack.category}
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">{pack.version}</span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-white">{pack.title}</h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{pack.description}</p>
+                </div>
+
+                <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                  <code className="text-xs font-mono text-sky-300">
+                    sentinel pack add {pack.name}
+                  </code>
+                  <button
+                    onClick={() => copyToClipboard(`sentinel pack add ${pack.name}`, pack.name)}
+                    className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
+                    title="Copy command"
+                  >
+                    {copiedId === pack.name ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Publish Section */}
+      <section id="publish" className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Open Registry &amp; Enterprise Spaces
+            </div>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Publish your own</h2>
+            <p className="text-sm text-zinc-400 max-w-xl mx-auto">
+              The registry is open. Publish a module with one command, or keep modules private in your own repository.
             </p>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border border-white/[0.08] bg-black/40 rounded-xl p-5 font-mono text-xs">
-                <div className="text-zinc-500 mb-2"># 1. Publish a custom component</div>
-                <div className="text-sky-300 font-bold">$ sentinel push components/my-model.yaml</div>
-                <p className="text-[11px] text-zinc-400 mt-2 font-sans leading-relaxed">
-                  Validates nodes, edges, and parameter bindings, and stages to the community registry.
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Step 1: Open push */}
+            <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3">
+              <div className="text-xs font-semibold text-zinc-300">Community Registry</div>
+              <div className="p-3 rounded-xl bg-black/60 border border-white/[0.08] font-mono text-xs text-sky-300 flex items-center justify-between">
+                <span>sentinel push components/my-model.yaml</span>
+                <button
+                  onClick={() => copyToClipboard("sentinel push components/my-model.yaml", "pub-cmd1")}
+                  className="hover:text-white"
+                >
+                  {copiedId === "pub-cmd1" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
               </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Validates nodes, edges, and parameters, then stages your module for the community registry.
+              </p>
+            </div>
 
-              <div className="border border-white/[0.08] bg-black/40 rounded-xl p-5 font-mono text-xs">
-                <div className="text-zinc-500 mb-2"># 2. Switch to your private org space</div>
-                <div className="text-emerald-300 font-bold">$ sentinel config set space https://github.com/my-org/sentinel-space</div>
-                <p className="text-[11px] text-zinc-400 mt-2 font-sans leading-relaxed">
-                  Use your own GitHub or GitLab repository to manage private enterprise modules and policies.
-                </p>
+            {/* Step 2: Private Space */}
+            <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3">
+              <div className="text-xs font-semibold text-zinc-300">Private Git Space</div>
+              <div className="p-3 rounded-xl bg-black/60 border border-white/[0.08] font-mono text-xs text-sky-300 flex items-center justify-between">
+                <span className="truncate">sentinel config set space https://github.com/my-org/sentinel-space</span>
+                <button
+                  onClick={() => copyToClipboard("sentinel config set space https://github.com/my-org/sentinel-space", "pub-cmd2")}
+                  className="hover:text-white shrink-0 ml-1"
+                >
+                  {copiedId === "pub-cmd2" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
               </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Use a private GitHub or GitLab repository for internal modules and policies.
+              </p>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
-      {/* Module Spec Slideover Modal */}
+      {/* Closing CTA */}
+      <section id="install" className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10] text-center">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Run your first experiment in minutes.
+          </h2>
+          <p className="text-base text-zinc-300/80 max-w-xl mx-auto">
+            Open source. Runs on your hardware. Dual-licensed under Apache 2.0 and MIT.
+          </p>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/docs#quickstart"
+              className="w-full sm:w-auto px-7 py-3 rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <Terminal className="w-4 h-4 text-zinc-950" />
+              <span>Install Sentinel</span>
+            </Link>
+
+            <a
+              href="https://github.com/rimraf-adi/sentinel"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full sm:w-auto px-7 py-3 rounded-full border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] text-white font-medium text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              <Github className="w-4 h-4" />
+              <span>View on GitHub</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Specification Preview Modal */}
       {selectedModule && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="relative w-full max-w-2xl bg-[#0b0c10] border border-white/[0.12] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="p-5 border-b border-white/[0.08] flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0b0c10] border border-white/[0.1] rounded-2xl max-w-2xl w-full p-6 space-y-4 glow-card max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div>
-                <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${getDomainColor(selectedModule.domain)}`}>
-                  {selectedModule.domain}
-                </span>
-                <h3 className="text-lg font-bold text-white mt-1.5">{selectedModule.name}</h3>
-                <p className="text-xs text-zinc-400 font-mono">{selectedModule.component_id}</p>
+                <h3 className="font-bold text-white text-lg">{selectedModule.name}</h3>
+                <span className="text-xs font-mono text-zinc-400">{selectedModule.component_id}</span>
               </div>
               <button
                 onClick={() => setSelectedModule(null)}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+                className="p-1 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-5 font-mono text-xs">
-              <div>
-                <div className="text-zinc-400 uppercase text-[10px] tracking-wider mb-1.5 font-semibold">Description</div>
-                <p className="text-zinc-200 font-sans text-xs leading-relaxed">{selectedModule.description}</p>
-              </div>
+            <p className="text-xs text-zinc-300 leading-relaxed">{selectedModule.description}</p>
 
-              <div>
-                <div className="text-zinc-400 uppercase text-[10px] tracking-wider mb-1.5 font-semibold">Install Command</div>
-                <div className="bg-black/50 p-3 rounded-xl flex items-center justify-between text-zinc-200 border border-white/[0.08]">
-                  <span>sentinel add --module {selectedModule.id}</span>
-                  <button
-                    onClick={() => copyToClipboard(`sentinel add --module ${selectedModule.id}`, `modal-${selectedModule.id}`)}
-                    className="p-1 hover:text-sky-400"
-                  >
-                    {copiedId === `modal-${selectedModule.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-zinc-400 uppercase text-[10px] tracking-wider mb-1.5 font-semibold">GitHub Raw CDN Endpoint</div>
-                <a
-                  href={`https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main/${selectedModule.path}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sky-400 hover:underline flex items-center gap-1.5 text-xs break-all"
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-zinc-400">Install Command:</div>
+              <div className="p-2.5 rounded-lg bg-black/60 border border-white/[0.06] font-mono text-xs text-sky-300 flex items-center justify-between">
+                <span>sentinel add {selectedModule.id}</span>
+                <button
+                  onClick={() => copyToClipboard(`sentinel add ${selectedModule.id}`, "modal-cmd")}
+                  className="hover:text-white"
                 >
-                  <span>https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main/{selectedModule.path}</span>
-                  <ExternalLink className="w-3 h-3 shrink-0" />
-                </a>
+                  {copiedId === "modal-cmd" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
               </div>
             </div>
 
-            <div className="p-4 border-t border-white/[0.08] bg-black/20 flex justify-end gap-3">
-              <button
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-zinc-400">Remote YAML Path:</div>
+              <code className="text-xs font-mono text-zinc-400 block p-2 rounded bg-black/40 border border-white/[0.04]">
+                {selectedModule.path}
+              </code>
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <Link
+                href="/docs/templates"
+                className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white transition-colors"
                 onClick={() => setSelectedModule(null)}
-                className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs text-zinc-300 font-medium transition-colors"
               >
-                Close
-              </button>
-              <button
-                onClick={() => copyToClipboard(`sentinel add --module ${selectedModule.id}`, `modal-btn-${selectedModule.id}`)}
-                className="px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-xs text-zinc-950 font-semibold transition-colors flex items-center gap-2"
-              >
-                <Terminal className="w-3.5 h-3.5" />
-                <span>Copy Install Command</span>
-              </button>
+                View in Templates Guide
+              </Link>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] bg-[#070709] py-10 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono">
-          <div className="flex items-center gap-2.5">
-            <Logo size={20} />
-            <span className="font-semibold text-zinc-400">Sentinel Hub</span>
-            <span>·</span>
-            <span>Agent-First Dual-Engine ML Control Plane</span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <a href="https://github.com/rimraf-adi/sentinel" target="_blank" rel="noreferrer" className="hover:text-zinc-300 transition-colors">
-              Sentinel Core
-            </a>
-            <a href="https://github.com/rimraf-adi/sentinel-hub" target="_blank" rel="noreferrer" className="hover:text-zinc-300 transition-colors">
-              Sentinel Hub
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
