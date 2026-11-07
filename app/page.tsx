@@ -18,6 +18,7 @@ import {
   Compass,
   ArrowUpRight
 } from "lucide-react";
+import { Logo } from "./components/Logo";
 
 type Module = {
   id: string;
@@ -137,9 +138,7 @@ export default function HubHome() {
         {/* Global Navigation */}
         <header className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.1] flex items-center justify-center text-sky-400 font-mono text-xl font-bold backdrop-blur-md">
-              ☍
-            </div>
+            <Logo size={36} />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold tracking-tight text-white text-base">sentinel</span>
@@ -593,8 +592,9 @@ export default function HubHome() {
       {/* Footer */}
       <footer className="border-t border-white/[0.06] bg-[#070709] py-10 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono">
-          <div className="flex items-center gap-2">
-            <span>☍ Sentinel</span>
+          <div className="flex items-center gap-2.5">
+            <Logo size={20} />
+            <span className="font-semibold text-zinc-400">Sentinel Hub</span>
             <span>·</span>
             <span>Agent-First Dual-Engine ML Control Plane</span>
           </div>

@@ -4,6 +4,16 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sentinel Hub · Decentralized Neural Architecture & Capabilities Registry",
   description: "Browse, install, and publish declarative PyTorch modules, xAI diagnostic packs, and telemetry extensions for Sentinel.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon.png" },
+    ],
+  },
 };
 
 export default function RootLayout({
