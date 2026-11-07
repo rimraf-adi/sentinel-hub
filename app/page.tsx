@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import registryData from "../registry.json";
 import integrationsData from "../integrations.json";
@@ -23,10 +23,11 @@ import {
   Activity,
   ShieldCheck,
   Cpu,
-  BarChart3,
-  Sliders,
-  Sparkles,
-  Download
+  RefreshCw,
+  GitBranch,
+  FileCode,
+  Download,
+  CheckCircle2
 } from "lucide-react";
 
 type Module = {
@@ -50,14 +51,87 @@ type Integration = {
   file?: string;
 };
 
+type GitCommit = {
+  sha: string;
+  message: string;
+  date: string;
+};
+
 export default function HubHome() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [selectedModuleYaml, setSelectedModuleYaml] = useState<string | null>(null);
+  const [loadingYaml, setLoadingYaml] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const modules = registryData.modules as Module[];
+  // Dynamic modules state initialized from bundled JSON
+  const [modules, setModules] = useState<Module[]>(registryData.modules as Module[]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncSource, setSyncSource] = useState<"github" | "local_fallback">("github");
+  const [latestCommit, setLatestCommit] = useState<GitCommit | null>(null);
+  const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(null);
+
   const integrations = integrationsData.integrations as Integration[];
+
+  // Dynamic fetch function from git repo
+  const fetchLiveRegistry = useCallback(async (isManual = false) => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch(`/api/registry?refresh=${isManual ? "true" : "false"}&_t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.modules && Array.isArray(data.modules)) {
+          setModules(data.modules);
+        }
+        if (data.source) {
+          setSyncSource(data.source);
+        }
+        if (data.latestCommit) {
+          setLatestCommit(data.latestCommit);
+        }
+        setLastSyncedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+      }
+    } catch (err) {
+      console.error("Failed to sync live templates from git:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  // Sync on initial load
+  useEffect(() => {
+    fetchLiveRegistry();
+  }, [fetchLiveRegistry]);
+
+  // When a module is selected, fetch its live raw YAML from git
+  useEffect(() => {
+    if (!selectedModule) {
+      setSelectedModuleYaml(null);
+      return;
+    }
+
+    let isMounted = true;
+    setLoadingYaml(true);
+    fetch(`/api/raw?path=${encodeURIComponent(selectedModule.path)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) {
+          setSelectedModuleYaml(data.content || "# No content available");
+          setLoadingYaml(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setSelectedModuleYaml("# Failed to load live template YAML from git repository");
+          setLoadingYaml(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedModule]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -103,7 +177,6 @@ export default function HubHome() {
 
       {/* Hero Section */}
       <section className="relative hero-atmosphere border-b border-white/[0.06] overflow-hidden pt-12 sm:pt-20 pb-16 px-4 sm:px-6">
-        {/* Subtle Background Layer */}
         <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
           <svg className="w-full h-full object-cover" viewBox="0 0 1440 480" fill="none" preserveAspectRatio="none">
             <path d="M0 480L180 340L380 410L620 280L840 370L1060 290L1260 360L1440 310V480H0Z" fill="#0b1322" opacity="0.6" />
@@ -113,24 +186,20 @@ export default function HubHome() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
-          {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.04] text-zinc-300 text-xs font-medium backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
             <span>Open source · Built for coding agents and ML teams</span>
           </div>
 
-          {/* Headline */}
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
             Start from a template. <br className="hidden sm:inline" />
             Build with blocks. <span className="font-editorial text-sky-200">See every run.</span>
           </h1>
 
-          {/* Subhead */}
           <p className="text-base sm:text-lg text-zinc-300/85 max-w-2xl mx-auto leading-relaxed font-normal">
             Sentinel is a lightweight control plane for ML training. Define models as modular graphs, run them on your own hardware, and monitor training from one dashboard. No cloud account required.
           </p>
 
-          {/* Primary & Secondary CTAs */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#install"
@@ -149,7 +218,6 @@ export default function HubHome() {
             </a>
           </div>
 
-          {/* Install Line */}
           <div className="pt-4 max-w-xl mx-auto">
             <div className="relative flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-black/60 border border-white/[0.1] font-mono text-xs text-zinc-300 shadow-inner">
               <span className="truncate text-left text-zinc-200">
@@ -205,7 +273,6 @@ export default function HubHome() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Pillar 1: Templates */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
               <Layers className="w-5 h-5" />
@@ -216,7 +283,6 @@ export default function HubHome() {
             </p>
           </div>
 
-          {/* Pillar 2: Modular by design */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
               <Boxes className="w-5 h-5" />
@@ -227,7 +293,6 @@ export default function HubHome() {
             </p>
           </div>
 
-          {/* Pillar 3: Built-in observability */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
               <Activity className="w-5 h-5" />
@@ -238,7 +303,6 @@ export default function HubHome() {
             </p>
           </div>
 
-          {/* Pillar 4: Validated before it runs */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
               <ShieldCheck className="w-5 h-5" />
@@ -249,7 +313,6 @@ export default function HubHome() {
             </p>
           </div>
 
-          {/* Pillar 5: No lock-in */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <Cpu className="w-5 h-5" />
@@ -260,7 +323,6 @@ export default function HubHome() {
             </p>
           </div>
 
-          {/* Pillar 6: Agent-ready */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
               <Terminal className="w-5 h-5" />
@@ -282,7 +344,6 @@ export default function HubHome() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Step 1 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-sky-400 uppercase tracking-wider font-semibold">Step 01</div>
@@ -302,7 +363,6 @@ export default function HubHome() {
               </div>
             </div>
 
-            {/* Step 2 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-purple-400 uppercase tracking-wider font-semibold">Step 02</div>
@@ -322,7 +382,6 @@ export default function HubHome() {
               </div>
             </div>
 
-            {/* Step 3 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">Step 03</div>
@@ -342,7 +401,6 @@ export default function HubHome() {
               </div>
             </div>
 
-            {/* Step 4 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-emerald-400 uppercase tracking-wider font-semibold">Step 04</div>
@@ -365,12 +423,46 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Registry Section: Architecture Catalog */}
+      {/* Registry Section: Architecture Catalog with Dynamic Git Sync */}
       <section id="architectures" className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+        {/* Dynamic Git Repo Sync Banner */}
+        <div className="mb-8 p-3.5 rounded-xl border border-white/[0.08] bg-[#0b0c10] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-zinc-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-medium">Live Git Catalog:</span>
+            <span className="font-mono text-sky-400">rimraf-adi/sentinel-hub@main</span>
+            {latestCommit && (
+              <span className="hidden md:inline font-mono text-zinc-500">
+                · commit {latestCommit.sha}
+              </span>
+            )}
+            <span className="text-zinc-500">
+              ({modules.length} templates dynamic)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-auto">
+            {lastSyncedTime && (
+              <span className="text-[11px] text-zinc-500 hidden sm:inline">
+                Synced at {lastSyncedTime}
+              </span>
+            )}
+            <button
+              onClick={() => fetchLiveRegistry(true)}
+              disabled={isSyncing}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white transition-colors border border-white/[0.06] font-mono text-[11px]"
+              title="Fetch latest templates from GitHub repository"
+            >
+              <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin text-sky-400" : ""}`} />
+              <span>{isSyncing ? "Syncing Git..." : "Sync from Git"}</span>
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">
-              Official Registry
+              Dynamic Registry
             </div>
             <h2 className="text-3xl font-extrabold text-white tracking-tight">Architecture catalog</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-xl">
@@ -379,7 +471,6 @@ export default function HubHome() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            {/* Search */}
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
               <input
@@ -418,7 +509,7 @@ export default function HubHome() {
           ))}
         </div>
 
-        {/* 14 Architecture Cards */}
+        {/* Dynamic Architecture Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredModules.map((m) => (
             <div
@@ -449,7 +540,7 @@ export default function HubHome() {
                   <button
                     onClick={() => setSelectedModule(m)}
                     className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
-                    title="Inspect specification"
+                    title="Inspect live YAML specification"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
@@ -548,7 +639,6 @@ export default function HubHome() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Step 1: Open push */}
             <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3">
               <div className="text-xs font-semibold text-zinc-300">Community Registry</div>
               <div className="p-3 rounded-xl bg-black/60 border border-white/[0.08] font-mono text-xs text-sky-300 flex items-center justify-between">
@@ -565,7 +655,6 @@ export default function HubHome() {
               </p>
             </div>
 
-            {/* Step 2: Private Space */}
             <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3">
               <div className="text-xs font-semibold text-zinc-300">Private Git Space</div>
               <div className="p-3 rounded-xl bg-black/60 border border-white/[0.08] font-mono text-xs text-sky-300 flex items-center justify-between">
@@ -617,14 +706,23 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Specification Preview Modal */}
+      {/* Live YAML Specification Modal from Git Repo */}
       {selectedModule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0b0c10] border border-white/[0.1] rounded-2xl max-w-2xl w-full p-6 space-y-4 glow-card max-h-[85vh] overflow-y-auto">
+          <div className="bg-[#0b0c10] border border-white/[0.1] rounded-2xl max-w-3xl w-full p-6 space-y-4 glow-card max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div>
-                <h3 className="font-bold text-white text-lg">{selectedModule.name}</h3>
-                <span className="text-xs font-mono text-zinc-400">{selectedModule.component_id}</span>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-white text-lg">{selectedModule.name}</h3>
+                  <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border ${getDomainBadge(selectedModule.domain)}`}>
+                    {selectedModule.domain}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 mt-1 text-xs font-mono text-zinc-400">
+                  <span>{selectedModule.component_id}</span>
+                  <span>·</span>
+                  <span className="text-zinc-500">{selectedModule.path}</span>
+                </div>
               </div>
               <button
                 onClick={() => setSelectedModule(null)}
@@ -637,33 +735,73 @@ export default function HubHome() {
             <p className="text-xs text-zinc-300 leading-relaxed">{selectedModule.description}</p>
 
             <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-400">Install Command:</div>
-              <div className="p-2.5 rounded-lg bg-black/60 border border-white/[0.06] font-mono text-xs text-sky-300 flex items-center justify-between">
-                <span>sentinel add {selectedModule.id}</span>
+              <div className="text-xs font-semibold text-zinc-400 flex items-center justify-between">
+                <span>Install Command:</span>
                 <button
                   onClick={() => copyToClipboard(`sentinel add ${selectedModule.id}`, "modal-cmd")}
-                  className="hover:text-white"
+                  className="hover:text-white flex items-center gap-1 text-[11px] font-mono text-sky-400"
                 >
                   {copiedId === "modal-cmd" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>Copy</span>
                 </button>
+              </div>
+              <div className="p-2.5 rounded-lg bg-black/60 border border-white/[0.06] font-mono text-xs text-sky-300">
+                sentinel add {selectedModule.id}
               </div>
             </div>
 
+            {/* Live YAML Specification Viewer */}
             <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-400">Remote YAML Path:</div>
-              <code className="text-xs font-mono text-zinc-400 block p-2 rounded bg-black/40 border border-white/[0.04]">
-                {selectedModule.path}
-              </code>
+              <div className="text-xs font-semibold text-zinc-400 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <FileCode className="w-4 h-4 text-sky-400" />
+                  <span>Live YAML Specification (from Git):</span>
+                </span>
+                {selectedModuleYaml && (
+                  <button
+                    onClick={() => copyToClipboard(selectedModuleYaml, "modal-yaml")}
+                    className="hover:text-white flex items-center gap-1 text-[11px] font-mono text-zinc-400 hover:text-sky-300"
+                  >
+                    {copiedId === "modal-yaml" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>Copy YAML</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="rounded-xl bg-[#070709] border border-white/[0.08] p-3 max-h-72 overflow-y-auto font-mono text-xs text-zinc-300">
+                {loadingYaml ? (
+                  <div className="py-8 text-center text-zinc-500 flex items-center justify-center gap-2">
+                    <RefreshCw className="w-4 h-4 animate-spin text-sky-400" />
+                    <span>Fetching live template from repository...</span>
+                  </div>
+                ) : (
+                  <pre className="whitespace-pre overflow-x-auto text-zinc-300">
+                    {selectedModuleYaml}
+                  </pre>
+                )}
+              </div>
             </div>
 
-            <div className="pt-2 flex justify-end gap-2">
-              <Link
-                href="/docs/templates"
-                className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white transition-colors"
-                onClick={() => setSelectedModule(null)}
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06]">
+              <a
+                href={`https://github.com/rimraf-adi/sentinel-hub/blob/main/${selectedModule.path}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white font-mono"
               >
-                View in Templates Guide
-              </Link>
+                <Github className="w-3.5 h-3.5" />
+                <span>View on GitHub ↗</span>
+              </a>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/docs/templates"
+                  className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white transition-colors"
+                  onClick={() => setSelectedModule(null)}
+                >
+                  View in Templates Guide
+                </Link>
+              </div>
             </div>
           </div>
         </div>

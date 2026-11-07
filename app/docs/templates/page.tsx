@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Navbar } from "../../components/Navbar";
 import { Footer } from "../../components/Footer";
@@ -16,20 +16,77 @@ import {
   ExternalLink,
   Code2,
   Box,
-  Cpu
+  Cpu,
+  RefreshCw,
+  Eye,
+  X,
+  FileCode,
+  Github
 } from "lucide-react";
+
+type Module = {
+  id: string;
+  component_id: string;
+  name: string;
+  domain: string;
+  path: string;
+  description: string;
+  tags?: string[];
+};
 
 export default function TemplatesDocPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [modules, setModules] = useState<Module[]>(registryData.modules as Module[]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [selectedYaml, setSelectedYaml] = useState<string | null>(null);
+  const [loadingYaml, setLoadingYaml] = useState(false);
+
+  const fetchLiveModules = useCallback(async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch(`/api/registry?_t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.modules && Array.isArray(data.modules)) {
+          setModules(data.modules);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load modules dynamically:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLiveModules();
+  }, [fetchLiveModules]);
+
+  useEffect(() => {
+    if (!selectedModule) {
+      setSelectedYaml(null);
+      return;
+    }
+    setLoadingYaml(true);
+    fetch(`/api/raw?path=${encodeURIComponent(selectedModule.path)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSelectedYaml(data.content || "# No content available");
+        setLoadingYaml(false);
+      })
+      .catch(() => {
+        setSelectedYaml("# Failed to load raw YAML from git");
+        setLoadingYaml(false);
+      });
+  }, [selectedModule]);
 
   const copy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
-
-  const modules = registryData.modules;
 
   const filteredModules = modules.filter(
     (m) => activeCategory === "all" || m.domain.toLowerCase() === activeCategory
@@ -167,12 +224,23 @@ export default function TemplatesDocPage() {
           </div>
         </section>
 
-        {/* Catalog of 14 Templates */}
+        {/* Dynamic Catalog Section */}
         <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">Full Architecture Catalog</h2>
-              <p className="text-xs text-zinc-400">14 production-ready templates verified against PyTorch</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold text-white">Full Architecture Catalog</h2>
+                <button
+                  onClick={fetchLiveModules}
+                  className="p-1 text-zinc-400 hover:text-white"
+                  title="Refresh from Git"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-sky-400" : ""}`} />
+                </button>
+              </div>
+              <p className="text-xs text-zinc-400">
+                {modules.length} production-ready templates dynamically loaded from repository
+              </p>
             </div>
 
             {/* Filter buttons */}
@@ -213,22 +281,79 @@ export default function TemplatesDocPage() {
                   <code className="text-[11px] font-mono text-zinc-300">
                     sentinel add {m.id}
                   </code>
-                  <button
-                    onClick={() => copy(`sentinel add ${m.id}`, m.id)}
-                    className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
-                    title="Copy install command"
-                  >
-                    {copiedId === m.id ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setSelectedModule(m)}
+                      className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                      title="Inspect live YAML specification"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => copy(`sentinel add ${m.id}`, m.id)}
+                      className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white transition-colors"
+                      title="Copy install command"
+                    >
+                      {copiedId === m.id ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Modal for Live YAML in Templates Guide */}
+        {selectedModule && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-[#0b0c10] border border-white/[0.1] rounded-2xl max-w-2xl w-full p-6 space-y-4 glow-card max-h-[85vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                <div>
+                  <h3 className="font-bold text-white text-lg">{selectedModule.name}</h3>
+                  <span className="text-xs font-mono text-zinc-400">{selectedModule.path}</span>
+                </div>
+                <button
+                  onClick={() => setSelectedModule(null)}
+                  className="p-1 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="rounded-xl bg-[#070709] border border-white/[0.08] p-3 max-h-72 overflow-y-auto font-mono text-xs text-zinc-300">
+                {loadingYaml ? (
+                  <div className="py-8 text-center text-zinc-500">Loading YAML from git repo...</div>
+                ) : (
+                  <pre className="whitespace-pre overflow-x-auto text-zinc-300">
+                    {selectedYaml}
+                  </pre>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center pt-2 border-t border-white/[0.06]">
+                <a
+                  href={`https://github.com/rimraf-adi/sentinel-hub/blob/main/${selectedModule.path}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-zinc-400 hover:text-white font-mono flex items-center gap-1.5"
+                >
+                  <Github className="w-3.5 h-3.5" />
+                  <span>View on GitHub ↗</span>
+                </a>
+                <button
+                  onClick={() => setSelectedModule(null)}
+                  className="px-4 py-1.5 rounded-lg bg-white text-zinc-950 font-semibold text-xs"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
