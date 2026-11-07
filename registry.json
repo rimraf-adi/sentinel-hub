@@ -1,135 +1,212 @@
 {
-  "version": "1.0",
-  "name": "Sentinel Hub Registry",
-  "description": "Zero-budget, serverless open neural module and template registry for Sentinel",
-  "repository": "https://github.com/rimraf-adi/sentinel-hub",
   "cdn_base": "https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main",
+  "description": "Zero-budget, serverless open neural module and template registry for Sentinel",
   "modules": [
     {
-      "id": "vit-tiny",
       "component_id": "vision/vit-tiny@v1",
-      "name": "ViT Tiny",
-      "domain": "vision",
-      "path": "modules/vision/vit-tiny.yaml",
       "description": "Vision Transformer: patch embedding, CLS token, position encoding, transformer compounds, classification head",
-      "tags": ["transformer", "vision", "attention", "patch"]
+      "domain": "vision",
+      "id": "vit-tiny",
+      "name": "ViT Tiny",
+      "path": "modules/vision/vit-tiny.yaml",
+      "tags": [
+        "transformer",
+        "vision",
+        "attention",
+        "patch"
+      ]
     },
     {
-      "id": "unet",
       "component_id": "vision/unet@v1",
-      "name": "U-Net",
-      "domain": "vision",
-      "path": "modules/vision/unet.yaml",
       "description": "Classic U-Net: multi-scale encoder-decoder with symmetric residual skip concatenations",
-      "tags": ["segmentation", "medical", "skip-connections", "unet"]
+      "domain": "vision",
+      "id": "unet",
+      "name": "U-Net",
+      "path": "modules/vision/unet.yaml",
+      "tags": [
+        "segmentation",
+        "medical",
+        "skip-connections",
+        "unet"
+      ]
     },
     {
-      "id": "resnet-mini",
       "component_id": "vision/resnet-mini@v1",
-      "name": "ResNet Mini",
-      "domain": "vision",
-      "path": "modules/vision/resnet-mini.yaml",
       "description": "Miniature deep residual convolutional network with identity bypass loops",
-      "tags": ["resnet", "residual", "convolution", "vision"]
-    },
-    {
-      "id": "cnn-classifier",
-      "component_id": "vision/cnn-classifier@v1",
-      "name": "CNN Classifier",
       "domain": "vision",
-      "path": "modules/vision/cnn-classifier.yaml",
+      "id": "resnet-mini",
+      "name": "ResNet Mini",
+      "path": "modules/vision/resnet-mini.yaml",
+      "tags": [
+        "resnet",
+        "residual",
+        "convolution",
+        "vision"
+      ]
+    },
+    {
+      "component_id": "vision/cnn-classifier@v1",
       "description": "Standard convolutional classifier with batch normalization and max pooling",
-      "tags": ["cnn", "baseline", "classification"]
+      "domain": "vision",
+      "id": "cnn-classifier",
+      "name": "CNN Classifier",
+      "path": "modules/vision/cnn-classifier.yaml",
+      "tags": [
+        "cnn",
+        "baseline",
+        "classification"
+      ]
     },
     {
-      "id": "transformer-classifier",
       "component_id": "sequence/transformer-classifier@v1",
-      "name": "Transformer Classifier",
-      "domain": "sequence",
-      "path": "modules/sequence/transformer-classifier.yaml",
       "description": "Multi-head self-attention sequence classifier with positional encodings",
-      "tags": ["transformer", "nlp", "self-attention", "sequence"]
-    },
-    {
-      "id": "lstm-classifier",
-      "component_id": "sequence/lstm-classifier@v1",
-      "name": "LSTM Classifier",
       "domain": "sequence",
-      "path": "modules/sequence/lstm-classifier.yaml",
+      "id": "transformer-classifier",
+      "name": "Transformer Classifier",
+      "path": "modules/sequence/transformer-classifier.yaml",
+      "tags": [
+        "transformer",
+        "nlp",
+        "self-attention",
+        "sequence"
+      ]
+    },
+    {
+      "component_id": "sequence/lstm-classifier@v1",
       "description": "Recurrent LSTM sequence model for temporal and textual data",
-      "tags": ["lstm", "recurrent", "nlp", "sequence"]
+      "domain": "sequence",
+      "id": "lstm-classifier",
+      "name": "LSTM Classifier",
+      "path": "modules/sequence/lstm-classifier.yaml",
+      "tags": [
+        "lstm",
+        "recurrent",
+        "nlp",
+        "sequence"
+      ]
     },
     {
-      "id": "residual-mlp",
       "component_id": "tabular/residual-mlp@v1",
-      "name": "Residual MLP",
-      "domain": "tabular",
-      "path": "modules/tabular/residual-mlp.yaml",
       "description": "Deep tabular network with residual skip connections and layer normalization",
-      "tags": ["tabular", "mlp", "residual", "classification"]
+      "domain": "tabular",
+      "id": "residual-mlp",
+      "name": "Residual MLP",
+      "path": "modules/tabular/residual-mlp.yaml",
+      "tags": [
+        "tabular",
+        "mlp",
+        "residual",
+        "classification"
+      ]
     },
     {
-      "id": "deep-residual-mlp",
       "component_id": "tabular/deep-residual-mlp@v1",
-      "name": "Deep Residual MLP",
-      "domain": "tabular",
-      "path": "modules/tabular/deep-residual-mlp.yaml",
       "description": "Multi-stage residual MLP for complex structured tabular datasets",
-      "tags": ["tabular", "deep", "residual"]
-    },
-    {
-      "id": "ann-classifier",
-      "component_id": "tabular/ann-classifier@v1",
-      "name": "ANN Classifier",
       "domain": "tabular",
-      "path": "modules/tabular/ann-classifier.yaml",
+      "id": "deep-residual-mlp",
+      "name": "Deep Residual MLP",
+      "path": "modules/tabular/deep-residual-mlp.yaml",
+      "tags": [
+        "tabular",
+        "deep",
+        "residual"
+      ]
+    },
+    {
+      "component_id": "tabular/ann-classifier@v1",
       "description": "Standard dense feed-forward neural network for tabular classification",
-      "tags": ["tabular", "baseline", "dense"]
+      "domain": "tabular",
+      "id": "ann-classifier",
+      "name": "ANN Classifier",
+      "path": "modules/tabular/ann-classifier.yaml",
+      "tags": [
+        "tabular",
+        "baseline",
+        "dense"
+      ]
     },
     {
-      "id": "vae",
       "component_id": "generative/vae@v1",
-      "name": "Variational Autoencoder",
-      "domain": "generative",
-      "path": "modules/generative/vae.yaml",
       "description": "Stochastic generative model with latent Gaussian reparameterization (mu & sigma)",
-      "tags": ["vae", "generative", "reparameterization", "latent"]
-    },
-    {
-      "id": "gan",
-      "component_id": "generative/gan@v1",
-      "name": "Generative Adversarial Network",
       "domain": "generative",
-      "path": "modules/generative/gan.yaml",
+      "id": "vae",
+      "name": "Variational Autoencoder",
+      "path": "modules/generative/vae.yaml",
+      "tags": [
+        "vae",
+        "generative",
+        "reparameterization",
+        "latent"
+      ]
+    },
+    {
+      "component_id": "generative/gan@v1",
       "description": "Minimax generative adversarial network with generator and discriminator graphs",
-      "tags": ["gan", "adversarial", "generative"]
+      "domain": "generative",
+      "id": "gan",
+      "name": "Generative Adversarial Network",
+      "path": "modules/generative/gan.yaml",
+      "tags": [
+        "gan",
+        "adversarial",
+        "generative"
+      ]
     },
     {
-      "id": "gcn-classifier",
       "component_id": "graph/gcn-classifier@v1",
-      "name": "GCN Classifier",
-      "domain": "graph",
-      "path": "modules/graph/gcn-classifier.yaml",
       "description": "Graph Convolutional Network spectral propagation for node and graph classification",
-      "tags": ["graph", "gcn", "spectral"]
+      "domain": "graph",
+      "id": "gcn-classifier",
+      "name": "GCN Classifier",
+      "path": "modules/graph/gcn-classifier.yaml",
+      "tags": [
+        "graph",
+        "gcn",
+        "spectral"
+      ]
     },
     {
-      "id": "kan-linear",
       "component_id": "experimental/kan-linear@v1",
-      "name": "KAN Linear Classifier",
-      "domain": "experimental",
-      "path": "modules/experimental/kan-linear.yaml",
       "description": "Kolmogorov-Arnold Network replacing fixed linear weights with learnable spline activations",
-      "tags": ["kan", "spline", "experimental", "nonlinear"]
+      "domain": "experimental",
+      "id": "kan-linear",
+      "name": "KAN Linear Classifier",
+      "path": "modules/experimental/kan-linear.yaml",
+      "tags": [
+        "kan",
+        "spline",
+        "experimental",
+        "nonlinear"
+      ]
     },
     {
-      "id": "mamba-ssm",
       "component_id": "experimental/mamba-ssm@v1",
-      "name": "Mamba SSM Classifier",
-      "domain": "experimental",
-      "path": "modules/experimental/mamba-ssm.yaml",
       "description": "Selective State Space Model (SSM) with linear time complexity in sequence length",
-      "tags": ["mamba", "ssm", "state-space", "linear-attention"]
+      "domain": "experimental",
+      "id": "mamba-ssm",
+      "name": "Mamba SSM Classifier",
+      "path": "modules/experimental/mamba-ssm.yaml",
+      "tags": [
+        "mamba",
+        "ssm",
+        "state-space",
+        "linear-attention"
+      ]
+    },
+    {
+      "component_id": "tabular/tied-res-net@v1",
+      "description": "Custom Tied Res Net component",
+      "domain": "tabular",
+      "id": "tied-res-net",
+      "name": "Tied Res Net",
+      "path": "modules/tabular/tied-res-net.yaml",
+      "tags": [
+        "tabular",
+        "tied-res-net"
+      ]
     }
-  ]
+  ],
+  "name": "Sentinel Hub Registry",
+  "repository": "https://github.com/rimraf-adi/sentinel-hub",
+  "version": "1.0"
 }

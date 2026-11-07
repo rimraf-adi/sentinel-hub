@@ -1,0 +1,87 @@
+schema_version: '1.0'
+component_id: tabular/tied-res-net@v1
+name: Tied Res Net
+description: Custom Tied Res Net component
+domain: tabular
+extends: null
+defaults: []
+parameters:
+  epochs:
+    type: int
+    default: 200
+    options: []
+    range:
+    - 1.0
+    - 100000.0
+    help: Training epochs
+  width:
+    type: int
+    default: 32
+    options: []
+    range: null
+    help: embed.out, fc.out
+  lr:
+    type: float
+    default: 0.01
+    options: []
+    range:
+    - 1e-6
+    - 1.0
+    help: Learning rate
+locked: {}
+sweep: null
+smoke_test: {}
+graph:
+  inputs:
+    x:
+    - B
+    - 2
+  nodes:
+    act:
+      block: activation
+      params:
+        kind: relu
+      share: null
+    embed:
+      block: linear
+      params:
+        out: ${width}
+      share: null
+    fc:
+      block: linear
+      params:
+        out: ${width}
+      share: null
+    head:
+      block: linear
+      params:
+        out: 3
+      share: null
+    skip:
+      block: add
+      params: {}
+      share: null
+  edges:
+  - x -> embed.in
+  - embed.out -> fc.in
+  - fc.out -> act.in
+  - act.out -> skip.a
+  - embed.out -> skip.b
+  - skip.out -> head.in
+  outputs:
+    logits: head.out
+  training:
+    loss: cross_entropy
+    optimizer: adam
+    lr: ${lr}
+    epochs: ${epochs}
+    batch_size: null
+    data:
+      csv: data/demo.csv
+      features:
+      - x1
+      - x2
+      target: label
+      reshape: null
+      test_split: 0.2
+      seed: 0
