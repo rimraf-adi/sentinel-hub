@@ -199,6 +199,9 @@ export default function HubHome() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#install"
+              onClick={() => {
+                copyToClipboard("curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash", "install-hero");
+              }}
               className="w-full sm:w-auto px-7 py-3 rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
             >
               <Terminal className="w-4 h-4 text-zinc-900" />
@@ -214,14 +217,14 @@ export default function HubHome() {
             </a>
           </div>
 
-          {/* Install Line */}
-          <div className="pt-4 max-w-xl mx-auto">
+          {/* Single-command Install Line */}
+          <div className="pt-4 max-w-xl mx-auto" id="install">
             <div className="relative flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-black/60 border border-white/[0.1] font-mono text-xs text-zinc-300 shadow-inner">
               <span className="truncate text-left text-zinc-200">
-                cargo build --release -p sentinel-cli &amp;&amp; ./target/release/sentinel dev
+                curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash
               </span>
               <button
-                onClick={() => copyToClipboard("cargo build --release -p sentinel-cli && ./target/release/sentinel dev", "install-hero")}
+                onClick={() => copyToClipboard("curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash", "install-hero")}
                 className="p-1.5 rounded-lg hover:bg-white/[0.1] text-zinc-400 hover:text-white transition-colors shrink-0"
                 title="Copy install command"
               >
@@ -230,6 +233,16 @@ export default function HubHome() {
                 ) : (
                   <Copy className="w-4 h-4" />
                 )}
+              </button>
+            </div>
+            <div className="flex items-center justify-between px-2 pt-2 text-[11px] text-zinc-400">
+              <span>Single-command install • macOS &amp; Linux</span>
+              <button 
+                onClick={() => copyToClipboard("cargo install --git https://github.com/rimraf-adi/sentinel.git sentinel-cli", "cargo-alt")}
+                className="hover:text-zinc-200 transition-colors font-mono text-[10px]"
+                title="Copy cargo install command"
+              >
+                {copiedId === "cargo-alt" ? "✓ Copied cargo command" : "or: cargo install sentinel-cli"}
               </button>
             </div>
           </div>

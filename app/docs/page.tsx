@@ -124,18 +124,21 @@ export default function DocsPage() {
 
               <div className="relative rounded-xl bg-[#0b0c10] border border-white/[0.1] p-4 font-mono text-xs text-zinc-200">
                 <button
-                  onClick={() => copy("git clone https://github.com/rimraf-adi/sentinel.git\ncd sentinel\nuv sync\ncargo build --release -p sentinel-cli\n./target/release/sentinel dev", "install-docs")}
+                  onClick={() => copy("curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash", "install-docs")}
                   className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-white/[0.08] text-zinc-400 hover:text-white"
                   title="Copy command"
                 >
                   {copiedId === "install-docs" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
                 <pre className="overflow-x-auto text-zinc-300">
-{`git clone https://github.com/rimraf-adi/sentinel.git
-cd sentinel
-uv sync
-cargo build --release -p sentinel-cli
-./target/release/sentinel dev # starts dashboard at http://localhost:2512`}
+{`# 1. Single-command installer (macOS & Linux)
+curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash
+
+# Or via Cargo directly:
+cargo install --git https://github.com/rimraf-adi/sentinel.git sentinel-cli
+
+# 2. Launch the supervisor dashboard
+sentinel dev  # active at http://localhost:2512`}
                 </pre>
               </div>
 
