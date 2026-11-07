@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sentinel Hub | Templates and Modular Blocks for ML Training",
-  description: "Browse, install, and publish model templates, reusable blocks, and capability packs for Sentinel, the lightweight ML training control plane.",
+  title: "Sentinel Hub | Model Templates and Training Infrastructure",
+  description: "A registry of model templates, reusable blocks, and capability packs for Sentinel, an open-source ML training control plane.",
   icons: {
     icon: [
       { url: "/favicon.ico" },

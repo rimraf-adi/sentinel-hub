@@ -1,14 +1,14 @@
 {
   "registry_version": "1.0",
   "space": "sentinel-hub",
-  "updated_at": "2026-11-07T20:00:00Z",
+  "updated_at": "2026-11-07T21:20:00Z",
   "integrations": [
     {
       "name": "xai",
       "version": "1.0.0",
       "category": "interpretability",
-      "title": "Explainability and Remediation",
-      "description": "Integrated Gradients, Grad-CAM, attention rollout, and suggested fixes for training problems",
+      "title": "Explainability",
+      "description": "Integrated Gradients, Grad-CAM, attention rollout, and remediation suggestions",
       "command": "sentinel pack add xai",
       "ui_tab": "xai",
       "file": "integrations/xai.yaml"
@@ -18,7 +18,7 @@
       "version": "1.0.0",
       "category": "observability",
       "title": "Gradient Flow",
-      "description": "Live gradient inspection with alerts for vanishing and exploding layers",
+      "description": "Forward and backward gradient inspection with vanishing and exploding gradient alerts",
       "command": "sentinel pack add gradient-flow",
       "ui_tab": "flow",
       "file": "integrations/gradient-flow.yaml"
@@ -38,7 +38,7 @@
       "version": "1.0.0",
       "category": "governance",
       "title": "EvalGuard",
-      "description": "Regression checks, slice metrics, and fairness gates before release",
+      "description": "Regression checks, slice metrics, and fairness gates",
       "command": "sentinel pack add eval-guard",
       "ui_tab": "eval-guard",
       "file": "integrations/eval-guard.yaml"
@@ -48,7 +48,7 @@
       "version": "1.0.0",
       "category": "deployment",
       "title": "Export and Quantization",
-      "description": "ONNX conversion, FP16 and INT8 quantization, TensorRT engines",
+      "description": "ONNX conversion, FP16 and INT8 quantization, TensorRT engine compilation",
       "command": "sentinel pack add export-quantization",
       "ui_tab": "export",
       "file": "integrations/export-quantization.yaml"

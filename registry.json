@@ -3,7 +3,7 @@
   "version": "1.0",
   "cdn_base": "https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main",
   "repository": "https://github.com/rimraf-adi/sentinel-hub",
-  "description": "Templates, modular blocks, and capability packs for Sentinel ML control plane",
+  "description": "Model templates, reusable blocks, and capability packs for Sentinel ML training control plane",
   "modules": [
     {
       "id": "vit-tiny",
@@ -11,8 +11,8 @@
       "name": "ViT Tiny",
       "domain": "vision",
       "path": "modules/vision/vit-tiny.yaml",
-      "description": "Compact vision transformer for image classification",
-      "tags": ["vision", "transformer", "attention", "patch"]
+      "description": "Vision transformer for image classification",
+      "tags": ["vision", "transformer", "attention", "classification"]
     },
     {
       "id": "unet",
@@ -21,7 +21,7 @@
       "domain": "vision",
       "path": "modules/vision/unet.yaml",
       "description": "Encoder-decoder with skip connections for segmentation",
-      "tags": ["vision", "segmentation", "skip-connections", "medical"]
+      "tags": ["vision", "segmentation", "skip-connections", "unet"]
     },
     {
       "id": "resnet-mini",
@@ -29,7 +29,7 @@
       "name": "ResNet Mini",
       "domain": "vision",
       "path": "modules/vision/resnet-mini.yaml",
-      "description": "Small residual CNN for image tasks",
+      "description": "Residual convolutional network",
       "tags": ["vision", "residual", "convolution", "resnet"]
     },
     {
@@ -38,7 +38,7 @@
       "name": "CNN Classifier",
       "domain": "vision",
       "path": "modules/vision/cnn-classifier.yaml",
-      "description": "Convolutional baseline with batch norm and pooling",
+      "description": "Convolutional baseline with batch normalization",
       "tags": ["vision", "cnn", "classification", "baseline"]
     },
     {
@@ -47,8 +47,8 @@
       "name": "Transformer Classifier",
       "domain": "sequence",
       "path": "modules/sequence/transformer-classifier.yaml",
-      "description": "Multi-head attention classifier for sequences",
-      "tags": ["sequence", "transformer", "attention", "nlp"]
+      "description": "Multi-head attention classifier",
+      "tags": ["sequence", "transformer", "attention", "classification"]
     },
     {
       "id": "lstm-classifier",
@@ -65,7 +65,7 @@
       "name": "Residual MLP",
       "domain": "tabular",
       "path": "modules/tabular/residual-mlp.yaml",
-      "description": "Tabular network with skip connections and layer norm",
+      "description": "Residual network with layer normalization",
       "tags": ["tabular", "mlp", "residual", "classification"]
     },
     {
@@ -74,7 +74,7 @@
       "name": "Deep Residual MLP",
       "domain": "tabular",
       "path": "modules/tabular/deep-residual-mlp.yaml",
-      "description": "Multi-stage residual network for complex tabular data",
+      "description": "Multi-stage residual network for structured data",
       "tags": ["tabular", "deep", "residual", "multi-stage"]
     },
     {
@@ -83,7 +83,7 @@
       "name": "ANN Classifier",
       "domain": "tabular",
       "path": "modules/tabular/ann-classifier.yaml",
-      "description": "Dense feed-forward baseline for tabular data",
+      "description": "Dense feed-forward baseline",
       "tags": ["tabular", "dense", "baseline", "classification"]
     },
     {
@@ -92,8 +92,8 @@
       "name": "Variational Autoencoder",
       "domain": "generative",
       "path": "modules/generative/vae.yaml",
-      "description": "Latent-variable generative model",
-      "tags": ["generative", "vae", "latent", "reparameterization"]
+      "description": "Latent-variable model with Gaussian reparameterization",
+      "tags": ["generative", "vae", "latent", "gaussian"]
     },
     {
       "id": "gan",
@@ -101,7 +101,7 @@
       "name": "GAN",
       "domain": "generative",
       "path": "modules/generative/gan.yaml",
-      "description": "Generator and discriminator pair for sample generation",
+      "description": "Generator and discriminator with alternating updates",
       "tags": ["generative", "gan", "adversarial", "synthesis"]
     },
     {
@@ -116,20 +116,20 @@
     {
       "id": "kan-linear",
       "component_id": "experimental/kan-linear@v1",
-      "name": "KAN Linear (experimental)",
+      "name": "KAN Linear",
       "domain": "experimental",
       "path": "modules/experimental/kan-linear.yaml",
-      "description": "Learnable spline activations in place of fixed weights",
-      "tags": ["experimental", "kan", "spline", "learnable-activation"]
+      "description": "Learnable spline activations",
+      "tags": ["experimental", "kan", "spline", "activations"]
     },
     {
       "id": "mamba-ssm",
       "component_id": "experimental/mamba-ssm@v1",
-      "name": "Mamba SSM (experimental)",
+      "name": "Mamba SSM",
       "domain": "experimental",
       "path": "modules/experimental/mamba-ssm.yaml",
-      "description": "State-space model with linear scaling in sequence length",
-      "tags": ["experimental", "mamba", "ssm", "linear-attention"]
+      "description": "Selective state-space model, linear in sequence length",
+      "tags": ["experimental", "mamba", "ssm", "state-space"]
     }
   ]
 }

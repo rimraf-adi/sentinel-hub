@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { Github, Terminal } from "lucide-react";
 
 export function Footer() {
   return (
@@ -12,7 +11,7 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <span className="font-semibold text-white text-sm">Sentinel Hub</span>
               <span className="text-zinc-600 text-xs">·</span>
-              <span className="text-zinc-400 text-xs">Templates and tooling for ML training</span>
+              <span className="text-zinc-400 text-xs">Model templates and training infrastructure</span>
             </div>
           </div>
         </div>
@@ -32,19 +31,13 @@ export function Footer() {
           <Link href="/docs" className="hover:text-white transition-colors">
             Documentation
           </Link>
-          <Link href="/docs/templates" className="hover:text-white transition-colors">
-            Templates
-          </Link>
-          <Link href="/docs/integrations" className="hover:text-white transition-colors">
-            Integrations
-          </Link>
           <a
             href="https://github.com/rimraf-adi/sentinel/blob/main/LICENSE"
             target="_blank"
             rel="noreferrer"
             className="hover:text-white transition-colors"
           >
-            License (Apache 2.0 / MIT)
+            License
           </a>
         </div>
       </div>

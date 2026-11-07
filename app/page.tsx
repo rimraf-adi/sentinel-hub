@@ -11,10 +11,7 @@ import {
   Terminal, 
   Copy, 
   Check, 
-  ExternalLink, 
   Eye, 
-  Zap, 
-  Share2, 
   Github, 
   X,
   Boxes,
@@ -24,10 +21,7 @@ import {
   ShieldCheck,
   Cpu,
   RefreshCw,
-  GitBranch,
-  FileCode,
-  Download,
-  CheckCircle2
+  FileCode
 } from "lucide-react";
 
 type Module = {
@@ -99,7 +93,6 @@ export default function HubHome() {
     }
   }, []);
 
-  // Sync on initial load
   useEffect(() => {
     fetchLiveRegistry();
   }, [fetchLiveRegistry]);
@@ -121,7 +114,7 @@ export default function HubHome() {
           setLoadingYaml(false);
         }
       })
-      .catch((err) => {
+      .catch(() => {
         if (isMounted) {
           setSelectedModuleYaml("# Failed to load live template YAML from git repository");
           setLoadingYaml(false);
@@ -186,20 +179,23 @@ export default function HubHome() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+          {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.04] text-zinc-300 text-xs font-medium backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-            <span>Open source · Built for coding agents and ML teams</span>
+            <span>Open-source ML training infrastructure</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
-            Start from a template. <br className="hidden sm:inline" />
-            Build with blocks. <span className="font-editorial text-sky-200">See every run.</span>
+          {/* Headline (Uniform weight and typeface, no italic serif per notes) */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+            Training infrastructure for ML teams and coding agents.
           </h1>
 
+          {/* Subhead */}
           <p className="text-base sm:text-lg text-zinc-300/85 max-w-2xl mx-auto leading-relaxed font-normal">
-            Sentinel is a lightweight control plane for ML training. Define models as modular graphs, run them on your own hardware, and monitor training from one dashboard. No cloud account required.
+            Sentinel supervises training jobs, allocates GPUs, and tracks and monitors runs on hardware you control. Models are defined as modular, validated graphs and export to standard PyTorch.
           </p>
 
+          {/* Primary & Secondary CTAs */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#install"
@@ -213,11 +209,12 @@ export default function HubHome() {
               href="#architectures"
               className="w-full sm:w-auto px-6 py-3 rounded-full border border-white/[0.15] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 font-medium text-sm transition-colors flex items-center justify-center gap-1.5"
             >
-              <span>Browse architectures</span>
+              <span>View architectures</span>
               <ArrowRight className="w-4 h-4 text-zinc-400" />
             </a>
           </div>
 
+          {/* Install Line */}
           <div className="pt-4 max-w-xl mx-auto">
             <div className="relative flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-black/60 border border-white/[0.1] font-mono text-xs text-zinc-300 shadow-inner">
               <span className="truncate text-left text-zinc-200">
@@ -239,7 +236,7 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Proof Strip */}
+      {/* Key figures */}
       <section className="border-b border-white/[0.06] bg-black/40 py-8 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="space-y-1">
@@ -255,101 +252,108 @@ export default function HubHome() {
             <div className="text-xs text-zinc-400 font-medium">Built-in model blocks</div>
           </div>
           <div className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">0</div>
-            <div className="text-xs text-zinc-400 font-medium">Lock-in. Export to plain PyTorch at any time.</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight pt-1">Apache-2.0 / MIT</div>
+            <div className="text-xs text-zinc-400 font-medium">Dual-licensed</div>
           </div>
         </div>
       </section>
 
-      {/* Value Pillars */}
+      {/* Capabilities */}
       <section className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Designed for Performance and Autonomy
+            Core capabilities
           </h2>
           <p className="text-sm text-zinc-400">
-            Every piece is built to give ML developers and coding agents complete control over models and hardware.
+            A single binary for defining, running, and monitoring training workloads.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* 1. Model templates */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
               <Layers className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Templates</h3>
+            <h3 className="text-base font-bold text-white">Model templates</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Start from a proven architecture instead of a blank file. Ship with vision, sequence, tabular, and generative models, then save your own at the project, machine, or registry level.
+              Shipped vision, sequence, tabular, and generative architectures. Templates can be defined at the built-in, user, or project level and extended without modification to the originals.
             </p>
           </div>
 
+          {/* 2. Modular architecture */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
               <Boxes className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Modular by design</h3>
+            <h3 className="text-base font-bold text-white">Modular architecture</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Models are graphs of reusable blocks, and blocks can be built from other blocks. Define a structure once, reuse it everywhere, and change one part without touching the rest.
+              Models are composed from reusable blocks, which may themselves be composed from other blocks. A structure is defined once and reused across models.
             </p>
           </div>
 
+          {/* 3. Run monitoring */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
               <Activity className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Built-in observability</h3>
+            <h3 className="text-base font-bold text-white">Run monitoring</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Live metrics, job logs, and CPU, RAM, and GPU usage in one dashboard. Runs are stored in MLflow-compatible format, so your existing tools keep working.
+              Step-indexed metrics, job logs, and CPU, RAM, and GPU utilization in a single dashboard. Run data is stored in MLflow-compatible format.
             </p>
           </div>
 
+          {/* 4. Pre-run validation */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Validated before it runs</h3>
+            <h3 className="text-base font-bold text-white">Pre-run validation</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Shape mismatches, invalid parameters, and loss and task conflicts are caught before training starts. Errors point to the exact block at fault.
+              Tensor shapes, parameter bounds, and loss and task compatibility are checked before execution. Errors identify the specific block responsible.
             </p>
           </div>
 
+          {/* 5. Portable output */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <Cpu className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">No lock-in</h3>
+            <h3 className="text-base font-bold text-white">Portable output</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Training runs as standard Python and PyTorch. Export any model as a standalone script with no Sentinel dependency.
+              Training executes as standard Python and PyTorch. Any model can be exported as TorchScript, ONNX, or a standalone training script with no Sentinel dependency.
             </p>
           </div>
 
+          {/* 6. Programmatic interface */}
           <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0c10] space-y-3 hover:border-white/[0.15] transition-all">
             <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
               <Terminal className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Agent-ready</h3>
+            <h3 className="text-base font-bold text-white">Programmatic interface</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Every action is a CLI command or an HTTP call. Coding agents can design, launch, and inspect experiments without a custom integration.
+              All operations are available through the CLI and an HTTP and WebSocket API, so automated tooling and coding agents can operate Sentinel directly.
             </p>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Workflow */}
       <section className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10]">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center max-w-xl mx-auto space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">How It Works</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Workflow</h2>
             <p className="text-sm text-zinc-400">From template selection to zero-dependency PyTorch export in four steps.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Step 1 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-sky-400 uppercase tracking-wider font-semibold">Step 01</div>
-                <h3 className="font-bold text-white text-base">Choose a template</h3>
+                <h3 className="font-bold text-white text-base">Select a template</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Pick a model from the registry or start from your own.
+                  Choose a model from the registry or from your own repository.
                 </p>
               </div>
               <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
@@ -358,15 +362,16 @@ export default function HubHome() {
                   onClick={() => copyToClipboard("sentinel component list", "step1")}
                   className="hover:text-white"
                 >
-                  {copiedId === "step1" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copiedId === "step1" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
 
+            {/* Step 2 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-purple-400 uppercase tracking-wider font-semibold">Step 02</div>
-                <h3 className="font-bold text-white text-base">Compose and configure</h3>
+                <h3 className="font-bold text-white text-base">Configure</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
                   Adjust blocks, loss, optimizer, and scheduler in YAML.
                 </p>
@@ -377,17 +382,18 @@ export default function HubHome() {
                   onClick={() => copyToClipboard("sentinel component show vision/vit-tiny@v1", "step2")}
                   className="hover:text-white shrink-0 ml-1"
                 >
-                  {copiedId === "step2" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copiedId === "step2" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
 
+            {/* Step 3 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">Step 03</div>
-                <h3 className="font-bold text-white text-base">Train and observe</h3>
+                <h3 className="font-bold text-white text-base">Run</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Sentinel assigns GPUs, runs the job, and streams metrics to the dashboard.
+                  Sentinel allocates GPUs, executes the job, and streams metrics to the dashboard.
                 </p>
               </div>
               <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
@@ -396,17 +402,18 @@ export default function HubHome() {
                   onClick={() => copyToClipboard("sentinel run", "step3")}
                   className="hover:text-white"
                 >
-                  {copiedId === "step3" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copiedId === "step3" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
 
+            {/* Step 4 */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0b0c10] flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="text-xs font-mono text-emerald-400 uppercase tracking-wider font-semibold">Step 04</div>
                 <h3 className="font-bold text-white text-base">Export</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Take the trained model as TorchScript or ONNX, or standalone Python script.
+                  Export the trained model or the training script.
                 </p>
               </div>
               <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.06] font-mono text-[11px] text-zinc-300 flex items-center justify-between">
@@ -415,7 +422,7 @@ export default function HubHome() {
                   onClick={() => copyToClipboard("sentinel model export <run> -f onnx", "step4")}
                   className="hover:text-white shrink-0 ml-1"
                 >
-                  {copiedId === "step4" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copiedId === "step4" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
@@ -423,7 +430,7 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Registry Section: Architecture Catalog with Dynamic Git Sync */}
+      {/* Architecture catalog: Model architectures */}
       <section id="architectures" className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         {/* Dynamic Git Repo Sync Banner */}
         <div className="mb-8 p-3.5 rounded-xl border border-white/[0.08] bg-[#0b0c10] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
@@ -437,7 +444,7 @@ export default function HubHome() {
               </span>
             )}
             <span className="text-zinc-500">
-              ({modules.length} templates dynamic)
+              ({modules.length} architectures dynamic)
             </span>
           </div>
 
@@ -462,11 +469,11 @@ export default function HubHome() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">
-              Dynamic Registry
+              Model Catalog
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">Architecture catalog</h2>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Model architectures</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-xl">
-              Production-ready model templates. Inspect the specification, then add one to your project with a single command.
+              Reference implementations defined as declarative specifications. Each can be inspected, extended, and added to a project from the CLI.
             </p>
           </div>
 
@@ -475,7 +482,7 @@ export default function HubHome() {
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
               <input
                 type="text"
-                placeholder="Search templates..."
+                placeholder="Search architectures..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-1.5 rounded-lg bg-[#0b0c10] border border-white/[0.1] text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-sky-500 w-full sm:w-60"
@@ -562,17 +569,17 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Capability Packs Section */}
+      {/* Capability packs */}
       <section id="packs" className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10]">
         <div className="max-w-7xl mx-auto space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
-                Extensions & Hooks
+                Extensions
               </div>
               <h2 className="text-3xl font-extrabold text-white tracking-tight">Capability packs</h2>
               <p className="text-sm text-zinc-400 mt-1 max-w-xl">
-                Optional modules that extend Sentinel. Install only what you need.
+                Optional extensions installed per project.
               </p>
             </div>
 
@@ -625,16 +632,16 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Publish Section */}
+      {/* Publishing: Publish modules */}
       <section id="publish" className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Open Registry &amp; Enterprise Spaces
+              Community &amp; Private Spaces
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">Publish your own</h2>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Publish modules</h2>
             <p className="text-sm text-zinc-400 max-w-xl mx-auto">
-              The registry is open. Publish a module with one command, or keep modules private in your own repository.
+              The registry is open. Modules can be published to the community registry or kept in a private repository.
             </p>
           </div>
 
@@ -651,7 +658,7 @@ export default function HubHome() {
                 </button>
               </div>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Validates nodes, edges, and parameters, then stages your module for the community registry.
+                Validates nodes, edges, and parameter bindings, then stages the module for the community registry.
               </p>
             </div>
 
@@ -674,14 +681,14 @@ export default function HubHome() {
         </div>
       </section>
 
-      {/* Closing CTA */}
+      {/* Closing: Get started */}
       <section id="install" className="py-20 px-4 sm:px-6 border-t border-white/[0.06] bg-[#090b10] text-center">
         <div className="max-w-3xl mx-auto space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Run your first experiment in minutes.
+            Get started
           </h2>
           <p className="text-base text-zinc-300/80 max-w-xl mx-auto">
-            Open source. Runs on your hardware. Dual-licensed under Apache 2.0 and MIT.
+            Open source and self-hosted. Documentation and source are available on GitHub.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
