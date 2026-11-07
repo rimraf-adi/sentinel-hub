@@ -6,15 +6,14 @@ domain: "experimental"
 parameters:
   vocab_size: {type: int, default: 1000, range: [10, 100000], help: "Token vocabulary size"}
   dim: {type: int, default: 64, range: [16, 1024], help: "Hidden state dimension"}
-  d_state: {type: int, default: 16, range: [4, 64], help: "SSM recurrence state dimension"}
   classes: {type: int, default: 2, range: [1, 1000], help: "Output classes"}
 graph:
   inputs: {tokens: [B, 128]}
   nodes:
-    embed: {block: embedding, params: {num_embeddings: "${vocab_size}", embedding_dim: "${dim}"}}
+    embed: {block: embedding, params: {num_embeddings: "${vocab_size}", dim: "${dim}"}}
     ssm:   {block: linear, params: {out: "${dim}"}}
     norm:  {block: layernorm}
-    pool:  {block: pool_avg}
+    pool:  {block: mean_pool, params: {dim: 1}}
     head:  {block: linear, params: {out: "${classes}"}}
   edges: ["tokens -> embed", "embed -> ssm", "ssm -> norm", "norm -> pool", "pool -> head"]
   outputs: {logits: head}
