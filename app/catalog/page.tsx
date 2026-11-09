@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Copy,
@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Boxes,
   Terminal,
+  Sparkles,
 } from "lucide-react";
 
 function SentinelLogo({ size = 28 }: { size?: number }) {
@@ -111,10 +112,25 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 
 const GITHUB_REPO_URL = "https://github.com/rimraf-adi/sentinel";
 
-const ALL_TEMPLATES = [
+export type CatalogItem = {
+  id: string;
+  name: string;
+  kind: "component" | "template";
+  domain: string;
+  specs: string;
+  desc: string;
+  cmd: string;
+  author?: string;
+};
+
+const CATALOG_ITEMS: CatalogItem[] = [
+  // ==========================================
+  // COMPONENTS (Neural network graphs and DAGs)
+  // ==========================================
   {
     id: "vision/vit-tiny@v1",
     name: "ViT Tiny",
+    kind: "component",
     domain: "Vision",
     specs: "112K params · 1.39 MMACs",
     desc: "Patch embedding with multi-head self-attention blocks tuned for low-latency edge vision inference.",
@@ -123,6 +139,7 @@ const ALL_TEMPLATES = [
   {
     id: "vision/resnet-mini@v1",
     name: "ResNet Mini",
+    kind: "component",
     domain: "Vision",
     specs: "3 stages · Residual bottlenecks",
     desc: "Classic residual learning stack with skip connection highways and batch normalization.",
@@ -131,6 +148,7 @@ const ALL_TEMPLATES = [
   {
     id: "vision/unet@v1",
     name: "U-Net",
+    kind: "component",
     domain: "Vision",
     specs: "Contracting & Expanding Paths",
     desc: "Symmetric encoder-decoder topology with skip connections and channel projection layers for pixel-wise segmentation.",
@@ -139,6 +157,7 @@ const ALL_TEMPLATES = [
   {
     id: "vision/cnn-classifier@v1",
     name: "CNN Classifier",
+    kind: "component",
     domain: "Vision",
     specs: "Conv2D + MaxPool + Linear",
     desc: "Standard convolutional feature extractor with adaptive average pooling and dense classification head.",
@@ -147,6 +166,7 @@ const ALL_TEMPLATES = [
   {
     id: "tabular/deep-residual-mlp@v1",
     name: "Deep Residual MLP",
+    kind: "component",
     domain: "Tabular",
     specs: "Multi-stage residual blocks",
     desc: "Dense residual highway with LayerNorm, GELU activations, and automated compile-time shape inference.",
@@ -155,6 +175,7 @@ const ALL_TEMPLATES = [
   {
     id: "tabular/residual-mlp@v1",
     name: "Residual MLP",
+    kind: "component",
     domain: "Tabular",
     specs: "Single-stage skip connection",
     desc: "Lightweight feedforward architecture with linear skip bridges for structured tabular datasets.",
@@ -163,6 +184,7 @@ const ALL_TEMPLATES = [
   {
     id: "tabular/ann-classifier@v1",
     name: "ANN Classifier",
+    kind: "component",
     domain: "Tabular",
     specs: "Multi-layer perceptron",
     desc: "Standard dense neural network with dropout regularization and cross-entropy loss calibration.",
@@ -171,6 +193,7 @@ const ALL_TEMPLATES = [
   {
     id: "sequence/transformer-classifier@v1",
     name: "Transformer Classifier",
+    kind: "component",
     domain: "Sequence",
     specs: "RoPE + Causal Multi-Head Attn",
     desc: "Rotary Position Embeddings and causal multi-head self-attention stack for sequence classification.",
@@ -179,6 +202,7 @@ const ALL_TEMPLATES = [
   {
     id: "sequence/lstm-classifier@v1",
     name: "LSTM Classifier",
+    kind: "component",
     domain: "Sequence",
     specs: "Bi-directional recurrent cells",
     desc: "Recurrent neural network with hidden state persistence for time-series and token sequence modeling.",
@@ -187,6 +211,7 @@ const ALL_TEMPLATES = [
   {
     id: "generative/vae@v1",
     name: "Variational Autoencoder",
+    kind: "component",
     domain: "Generative",
     specs: "Latent Reparameterization",
     desc: "Convolutional encoder-decoder pair with KL-divergence loss scheduling and Gaussian sampling.",
@@ -195,6 +220,7 @@ const ALL_TEMPLATES = [
   {
     id: "generative/gan@v1",
     name: "Generative Adversarial Network",
+    kind: "component",
     domain: "Generative",
     specs: "Generator + Discriminator",
     desc: "Minimax adversarial training pair with non-saturating loss and gradient penalty stabilization.",
@@ -203,6 +229,7 @@ const ALL_TEMPLATES = [
   {
     id: "graph/gcn-classifier@v1",
     name: "Graph ConvNet",
+    kind: "component",
     domain: "Graph",
     specs: "Spectral graph convolution",
     desc: "Edge dropout and symmetric adjacency normalization with isolated memory management.",
@@ -211,23 +238,59 @@ const ALL_TEMPLATES = [
   {
     id: "speech/conformer-ctc@v1",
     name: "Conformer CTC ASR",
+    kind: "component",
     domain: "Speech",
     specs: "Log-Mel Frontend · 12-Layer Conformer · CTC Loss",
-    desc: "End-to-end streaming Conformer ASR trained from scratch with LogMel front-end, SpecAugment, and CTC decoding. Authored by Aditya Kinjawadekar.",
-    cmd: "sentinel add speech/conformer-ctc@v1",
+    desc: "End-to-end streaming Conformer ASR trained from scratch with LogMel front-end, SpecAugment, and CTC decoding.",
+    cmd: "sentinel component show speech/conformer-ctc@v1",
+    author: "Aditya Kinjawadekar",
   },
+
+  // ==========================================
+  // TEMPLATES (Full pipelines & training recipes)
+  // ==========================================
   {
     id: "speech/marathi-asr@v1",
     name: "Marathi Multi-Dialect MoE ASR",
+    kind: "template",
     domain: "Speech",
     specs: "4 Dialects · 3-Expert MoE Trunk · Multi-Exit CTC",
-    desc: "Marathi speech recognition trained from scratch featuring 4-dialect Sparse Mixture-of-Experts (Malvani, Ahirani, Varhadi, Standard) with multi-exit CTC decoders. Authored by Aditya Kinjawadekar.",
+    desc: "End-to-end multi-stage training pipeline from scratch: SSL masked reconstruction pretraining, causal dynamic chunking, and 4-dialect Sparse MoE adaptation.",
     cmd: "sentinel add speech/marathi-asr@v1",
+    author: "Aditya Kinjawadekar",
+  },
+  {
+    id: "llm/lora-finetune@v1",
+    name: "LoRA Fine-Tune (LLM)",
+    kind: "template",
+    domain: "LLM",
+    specs: "PEFT LoRA · bfloat16 · Optuna ASHA Sweeps",
+    desc: "Production parameter-efficient fine-tuning template for lightweight open-source language models with automated learning rate sweeps and crash-safe MLflow tracking.",
+    cmd: "sentinel add llm/lora-finetune@v1",
+  },
+  {
+    id: "custom/starter@v1",
+    name: "Blank Custom Recipe",
+    kind: "template",
+    domain: "Custom",
+    specs: "Standalone Python · Optuna ASHA · MLflow",
+    desc: "Standard starter blueprint for custom PyTorch recipes with daemon supervision, automated hyperparameter optimization, and checkpointing.",
+    cmd: "sentinel add custom/starter@v1",
+  },
+  {
+    id: "custom/command-runner@v1",
+    name: "Command Adapter",
+    kind: "template",
+    domain: "Custom",
+    specs: "Zero-Touch CLI Wrap",
+    desc: "Adapter template allowing any existing bash or Python training command to run under Sentinel process supervision and live hardware telemetry.",
+    cmd: "sentinel add custom/command-runner@v1",
   },
 ];
 
 export default function CatalogPage() {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"all" | "component" | "template">("all");
   const [activeDomain, setActiveDomain] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -237,15 +300,30 @@ export default function CatalogPage() {
     setTimeout(() => setCopiedCmd(null), 2000);
   };
 
-  const filtered = ALL_TEMPLATES.filter((t) => {
-    const matchesDomain = activeDomain === "all" || t.domain.toLowerCase() === activeDomain.toLowerCase();
-    const matchesSearch =
-      searchQuery === "" ||
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.desc.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDomain && matchesSearch;
-  });
+  const counts = useMemo(() => {
+    return {
+      all: CATALOG_ITEMS.length,
+      component: CATALOG_ITEMS.filter((t) => t.kind === "component").length,
+      template: CATALOG_ITEMS.filter((t) => t.kind === "template").length,
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    return CATALOG_ITEMS.filter((t) => {
+      const matchesKind = activeTab === "all" || t.kind === activeTab;
+      const matchesDomain =
+        activeDomain === "all" || t.domain.toLowerCase() === activeDomain.toLowerCase();
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        q === "" ||
+        t.name.toLowerCase().includes(q) ||
+        t.id.toLowerCase().includes(q) ||
+        t.desc.toLowerCase().includes(q) ||
+        t.specs.toLowerCase().includes(q);
+
+      return matchesKind && matchesDomain && matchesSearch;
+    });
+  }, [activeTab, activeDomain, searchQuery]);
 
   return (
     <div className="min-h-screen bg-[#070709] text-[#ececee] selection:bg-sky-500/25 selection:text-white relative font-sans">
@@ -262,6 +340,12 @@ export default function CatalogPage() {
           </Link>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/docs"
+              className="text-xs text-neutral-400 hover:text-white transition-colors hidden sm:inline"
+            >
+              Docs
+            </Link>
             <a
               href={GITHUB_REPO_URL}
               target="_blank"
@@ -277,24 +361,27 @@ export default function CatalogPage() {
 
       {/* Main Catalog Content */}
       <main className="max-w-5xl mx-auto px-6 pt-16 pb-24">
+        {/* Title & Search */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/[0.06]">
           <div>
-            <div className="text-xs font-mono text-sky-400 uppercase tracking-widest">
-              COMPONENT REGISTRY
+            <div className="text-xs font-mono text-sky-400 uppercase tracking-widest flex items-center gap-2">
+              <span>SENTINEL HUB REGISTRY</span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-zinc-400">v1.2</span>
             </div>
             <h1 className="mt-2 text-3xl sm:text-4xl font-normal tracking-tight text-white">
-              Model Architecture Catalog
+              Components &amp; Templates
             </h1>
-            <p className="mt-2 text-sm text-neutral-400 max-w-xl">
-              Verified deep learning architectures available in Sentinel. Inspect parameter counts, verify tensor shapes, or export to standalone PyTorch.
+            <p className="mt-2 text-sm text-neutral-400 max-w-xl leading-relaxed">
+              Explore neural network graph components for custom architectures, and full training templates for automated pipelines.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#0c0d12] border border-white/10 rounded-lg px-3 py-1.5 w-full md:w-64">
+          <div className="flex items-center gap-2 bg-[#0c0d12] border border-white/10 rounded-lg px-3 py-2 w-full md:w-72 shadow-inner">
             <Search className="h-3.5 w-3.5 text-neutral-400 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search components…"
+              placeholder="Search components or templates…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-transparent text-xs text-white placeholder-neutral-500 outline-none w-full font-mono"
@@ -302,15 +389,59 @@ export default function CatalogPage() {
           </div>
         </div>
 
+        {/* Primary View Toggle: Components vs Templates */}
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeTab === "all"
+                  ? "bg-white text-zinc-950 shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              All Items ({counts.all})
+            </button>
+            <button
+              onClick={() => setActiveTab("component")}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeTab === "component"
+                  ? "bg-white text-zinc-950 shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Boxes className="w-3.5 h-3.5" />
+              <span>Components ({counts.component})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("template")}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeTab === "template"
+                  ? "bg-white text-zinc-950 shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Templates ({counts.template})</span>
+            </button>
+          </div>
+
+          <div className="text-xs font-mono text-zinc-400 hidden sm:block">
+            {activeTab === "all" && "Showing all building blocks and full pipelines"}
+            {activeTab === "component" && "Neural architectures & DAG blocks (sentinel component show)"}
+            {activeTab === "template" && "Ready-to-train blueprints & pipelines (sentinel add)"}
+          </div>
+        </div>
+
         {/* Domain Filters */}
-        <div className="flex items-center gap-1.5 py-6 overflow-x-auto">
-          {["all", "speech", "vision", "tabular", "sequence", "generative", "graph"].map((domain) => (
+        <div className="flex items-center gap-1.5 py-6 overflow-x-auto border-b border-white/[0.04]">
+          {["all", "speech", "vision", "tabular", "sequence", "generative", "graph", "llm", "custom"].map((domain) => (
             <button
               key={domain}
               onClick={() => setActiveDomain(domain)}
               className={`px-3 py-1 rounded-full text-xs capitalize transition-all whitespace-nowrap font-mono ${
                 activeDomain === domain
-                  ? "bg-white text-black font-medium"
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 font-medium"
                   : "bg-white/5 border border-white/10 text-neutral-400 hover:text-white"
               }`}
             >
@@ -318,60 +449,106 @@ export default function CatalogPage() {
             </button>
           ))}
           <span className="ml-auto text-xs font-mono text-neutral-500 hidden sm:inline">
-            Showing {filtered.length} components
+            Showing {filtered.length} results
           </span>
         </div>
 
-        {/* Component Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((t) => (
-            <div
-              key={t.id}
-              className="rounded-xl border border-white/10 bg-[#0c0d12] p-5 hover:border-white/20 transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-neutral-400">{t.id}</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300 uppercase">
-                    {t.domain}
-                  </span>
-                </div>
-                <h2 className="mt-2 text-base font-medium text-white">{t.name}</h2>
-                <p className="mt-1 text-xs font-mono text-sky-400">{t.specs}</p>
-                <p className="mt-2 text-xs text-neutral-400 leading-relaxed">{t.desc}</p>
-              </div>
+        {/* Catalog Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {filtered.map((t) => {
+            const isTemplate = t.kind === "template";
 
-              <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                <code className="text-[11px] font-mono text-neutral-300 truncate max-w-[280px]">
-                  {t.cmd}
-                </code>
-                <button
-                  onClick={() => copyToClipboard(t.cmd, t.id)}
-                  className="flex items-center gap-1 rounded bg-white/5 hover:bg-white/10 px-2.5 py-1 text-xs text-neutral-300 hover:text-white transition-all flex-shrink-0 border border-white/5"
-                  title="Copy command"
-                >
-                  {copiedCmd === t.id ? (
-                    <Check className="h-3 w-3 text-emerald-400" />
-                  ) : (
-                    <Copy className="h-3 w-3" />
-                  )}
-                </button>
+            return (
+              <div
+                key={t.id}
+                className={`rounded-xl border p-5 transition-all flex flex-col justify-between ${
+                  isTemplate
+                    ? "bg-[#0d0c14] border-purple-500/20 hover:border-purple-500/40 shadow-sm"
+                    : "bg-[#0c0d12] border-white/10 hover:border-white/20"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs text-neutral-400 truncate">{t.id}</span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded font-semibold tracking-wider ${
+                          isTemplate
+                            ? "bg-purple-500/15 text-purple-300 border border-purple-500/30"
+                            : "bg-sky-500/15 text-sky-300 border border-sky-500/30"
+                        }`}
+                      >
+                        {isTemplate ? "TEMPLATE" : "COMPONENT"}
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300 uppercase">
+                        {t.domain}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h2 className="mt-2.5 text-base font-medium text-white flex items-center justify-between">
+                    <span>{t.name}</span>
+                    {t.author && (
+                      <span className="text-[10px] font-mono text-zinc-500 font-normal">
+                        by {t.author}
+                      </span>
+                    )}
+                  </h2>
+
+                  <p className="mt-1 text-xs font-mono text-sky-400">{t.specs}</p>
+                  <p className="mt-2 text-xs text-neutral-400 leading-relaxed">{t.desc}</p>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between gap-3">
+                  <code className="text-[11px] font-mono text-neutral-300 truncate max-w-[280px]">
+                    {t.cmd}
+                  </code>
+                  <button
+                    onClick={() => copyToClipboard(t.cmd, t.id)}
+                    className="flex items-center gap-1 rounded bg-white/5 hover:bg-white/10 px-2.5 py-1 text-xs text-neutral-300 hover:text-white transition-all flex-shrink-0 border border-white/5"
+                    title="Copy command"
+                  >
+                    {copiedCmd === t.id ? (
+                      <Check className="h-3 w-3 text-emerald-400" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
+        {filtered.length === 0 && (
+          <div className="py-16 text-center text-zinc-500 text-sm font-mono">
+            No {activeTab !== "all" ? activeTab + "s" : "items"} found matching &ldquo;{searchQuery}&rdquo; in domain &ldquo;{activeDomain}&rdquo;.
+          </div>
+        )}
+
         {/* CLI Usage Notice */}
-        <div className="mt-14 rounded-xl border border-white/10 bg-[#0a0a0f] p-6 text-xs font-mono text-neutral-400 space-y-2">
+        <div className="mt-14 rounded-xl border border-white/10 bg-[#0a0a0f] p-6 text-xs font-mono text-neutral-400 space-y-3">
           <div className="text-white font-medium flex items-center gap-2">
             <Terminal className="h-4 w-4 text-sky-400" />
-            <span>CLI Hierarchy Discovery</span>
+            <span>CLI Hierarchy &amp; Resolution</span>
           </div>
-          <p className="text-neutral-400 font-sans">
-            Models resolve across three discovery tiers: Embedded Built-in, User templates in <code className="text-neutral-200">~/.sentinel/templates</code>, and project-local overrides in <code className="text-neutral-200">./components</code>.
-          </p>
-          <div className="pt-2 text-neutral-300">
-            $ sentinel component list
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans text-xs text-neutral-400">
+            <div className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+              <div className="text-sky-400 font-mono text-[11px] font-semibold mb-1">
+                COMPONENTS
+              </div>
+              <p>
+                Discrete neural network graphs and DAGs. Inspect layer connections and compile-time shapes via <code className="text-white font-mono">sentinel component show &lt;id&gt;</code>.
+              </p>
+            </div>
+            <div className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+              <div className="text-purple-400 font-mono text-[11px] font-semibold mb-1">
+                TEMPLATES
+              </div>
+              <p>
+                Complete end-to-end training pipelines and curriculum recipes. Scaffold directly into your project with <code className="text-white font-mono">sentinel add &lt;id&gt;</code>.
+              </p>
+            </div>
           </div>
         </div>
       </main>
