@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   Copy,
   Check,
@@ -205,18 +206,33 @@ export default function Home() {
       <section className="relative pt-20 pb-14 md:pt-28 md:pb-20 overflow-hidden">
         <div className="mx-auto max-w-4xl px-6 text-center">
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl font-normal tracking-tight text-white max-w-3xl mx-auto leading-[1.08]">
+          <motion.h1
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-4xl sm:text-6xl font-normal tracking-tight text-white max-w-3xl mx-auto leading-[1.08]"
+          >
             Lightweight ML orchestration &amp; neural observability.
-          </h1>
+          </motion.h1>
 
           {/* Subtitle */}
-          <p className="mt-5 text-base sm:text-lg text-neutral-400 font-light max-w-2xl mx-auto leading-relaxed">
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+            className="mt-5 text-base sm:text-lg text-neutral-400 font-light max-w-2xl mx-auto leading-relaxed"
+          >
             A single 15 MB Rust binary for process supervision, dynamic GPU allocation, and live telemetry.
             Training code stays plain PyTorch with zero framework wrappers.
-          </p>
+          </motion.p>
 
           {/* Clean Install Bar */}
-          <div className="mt-8 mx-auto max-w-xl">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.18, ease: "easeOut" }}
+            className="mt-8 mx-auto max-w-xl"
+          >
             <div className="relative flex items-center justify-between rounded-xl border border-white/10 bg-[#0d0d12]/95 px-4 py-2.5 shadow-2xl backdrop-blur-md">
               <div className="flex items-center gap-3 overflow-x-auto text-xs sm:text-sm font-mono text-neutral-200">
                 <span className="text-sky-400 font-bold">$</span>
@@ -248,11 +264,17 @@ export default function Home() {
                 {copiedCmd === "cargo-copy" ? "Copied cargo command!" : "cargo install sentinel-cli"}
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Hero Aesthetic Screenshot Showcase */}
-        <div id="overview" className="relative mx-auto mt-14 max-w-5xl px-4 sm:px-6">
+        <motion.div
+          id="overview"
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+          className="relative mx-auto mt-14 max-w-5xl px-4 sm:px-6"
+        >
           <div className="relative rounded-2xl border border-white/10 bg-[#090a0f] shadow-2xl ring-1 ring-white/5 overflow-hidden">
             {/* Minimalist macOS Window Chrome */}
             <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#0c0d14] px-4 py-3">
@@ -281,7 +303,7 @@ export default function Home() {
               />
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 2. Measured Footprint Strip */}

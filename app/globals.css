@@ -11,6 +11,10 @@
   --emerald: #10b981;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: #f4f4f5;
   background-color: #070709;
