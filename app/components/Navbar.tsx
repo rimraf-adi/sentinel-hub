@@ -49,31 +49,15 @@ export function Navbar({ activePage = "" }: { activePage?: string }) {
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Nav Links (Clean Dedicated Routes Only) */}
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-zinc-400">
             <Link
-              href="/#architectures"
+              href="/catalog"
               className={`px-3 py-1.5 rounded-md hover:text-white hover:bg-white/[0.05] transition-colors ${
-                activePage === "architectures" ? "text-white bg-white/[0.08]" : ""
+                activePage === "catalog" ? "text-white bg-white/[0.08]" : ""
               }`}
             >
-              Architectures
-            </Link>
-            <Link
-              href="/#packs"
-              className={`px-3 py-1.5 rounded-md hover:text-white hover:bg-white/[0.05] transition-colors ${
-                activePage === "packs" ? "text-white bg-white/[0.08]" : ""
-              }`}
-            >
-              Packs
-            </Link>
-            <Link
-              href="/#publish"
-              className={`px-3 py-1.5 rounded-md hover:text-white hover:bg-white/[0.05] transition-colors ${
-                activePage === "publish" ? "text-white bg-white/[0.08]" : ""
-              }`}
-            >
-              Publish
+              Catalog
             </Link>
             <Link
               href="/docs"
@@ -147,25 +131,11 @@ export function Navbar({ activePage = "" }: { activePage?: string }) {
         <div className="md:hidden border-b border-white/[0.08] bg-[#090b10] px-4 py-4 space-y-3">
           <div className="flex flex-col space-y-1 text-sm font-medium">
             <Link
-              href="/#architectures"
+              href="/catalog"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
             >
-              Architectures
-            </Link>
-            <Link
-              href="/#packs"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
-            >
-              Packs
-            </Link>
-            <Link
-              href="/#publish"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
-            >
-              Publish
+              Catalog
             </Link>
             <Link
               href="/docs"

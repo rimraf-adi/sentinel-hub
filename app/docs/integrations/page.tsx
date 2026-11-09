@@ -2,22 +2,45 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Navbar } from "../../components/Navbar";
 import { Footer } from "../../components/Footer";
 import integrationsData from "../../../integrations.json";
+
+function SentinelLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" className="flex-shrink-0">
+      <defs>
+        <linearGradient id="sentinel-int-grad" x1="15%" y1="10%" x2="85%" y2="90%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="55%" stopColor="#2dd4bf" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+      <rect x="1.5" y="1.5" width="33" height="33" rx="8.5" fill="#090a0f" stroke="rgba(255, 255, 255, 0.12)" strokeWidth="1" />
+      <g>
+        <path d="M 23.5 11.5 H 15.5 L 10.5 16.5" stroke="url(#sentinel-int-grad)" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M 12 15.5 L 24 20.5" stroke="url(#sentinel-int-grad)" strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M 25.5 19.5 L 20.5 24.5 H 12.5" stroke="url(#sentinel-int-grad)" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="23.5" cy="11.5" r="2.2" fill="#090a0f" stroke="url(#sentinel-int-grad)" strokeWidth="1.8" />
+        <circle cx="12.5" cy="24.5" r="2.2" fill="#090a0f" stroke="url(#sentinel-int-grad)" strokeWidth="1.8" />
+      </g>
+    </svg>
+  );
+}
 import { 
   Terminal, 
   Copy, 
   Check, 
   Package, 
   ArrowLeft, 
+  ArrowRight,
   Activity, 
   ShieldCheck, 
   Cpu, 
   Zap,
   Sliders,
   Sparkles,
-  BarChart3
+  BarChart3,
+  Github
 } from "lucide-react";
 
 export default function IntegrationsDocPage() {
@@ -33,7 +56,38 @@ export default function IntegrationsDocPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#070709] text-zinc-100">
-      <Navbar activePage="integrations" />
+      {/* Minimal Docs Header */}
+      <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#070709]/90 backdrop-blur-md px-4 sm:px-6 h-14 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <SentinelLogo size={20} />
+            <span className="font-semibold text-sm text-white tracking-tight">sentinel</span>
+          </Link>
+          <span className="text-zinc-600 font-mono text-xs">/</span>
+          <Link href="/docs" className="text-zinc-400 hover:text-white font-mono text-xs transition-colors">docs</Link>
+          <span className="text-zinc-600 font-mono text-xs">/</span>
+          <span className="text-zinc-300 font-mono text-xs font-medium">integrations</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/catalog"
+            className="text-xs text-zinc-400 hover:text-white transition-colors flex items-center gap-1 font-mono"
+          >
+            <span>Catalog</span>
+            <ArrowRight className="w-3 h-3 text-zinc-500" />
+          </Link>
+          <a
+            href="https://github.com/rimraf-adi/sentinel"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-all"
+          >
+            <Github className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">GitHub</span>
+          </a>
+        </div>
+      </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-12">
         <div className="mb-8">
