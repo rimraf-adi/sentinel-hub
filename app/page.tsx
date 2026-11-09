@@ -164,29 +164,20 @@ export default function Home() {
             </span>
           </Link>
 
-          {/* Navigation Links */}
+          {/* Navigation Links (Dedicated Page Routes Only) */}
           <nav className="hidden md:flex items-center gap-6 text-[13px] text-neutral-400">
-            <a href="#overview" className="hover:text-white transition-colors">
-              Overview
-            </a>
-            <a href="#architecture" className="hover:text-white transition-colors">
-              Architecture
-            </a>
-            <a href="#benchmarks" className="hover:text-white transition-colors">
-              Footprint
-            </a>
-            <a href="#capabilities" className="hover:text-white transition-colors">
-              Capabilities
-            </a>
             <Link href="/catalog" className="hover:text-white transition-colors">
               Catalog
+            </Link>
+            <Link href="/docs/templates" className="hover:text-white transition-colors">
+              Templates
+            </Link>
+            <Link href="/docs/integrations" className="hover:text-white transition-colors">
+              Integrations
             </Link>
             <Link href="/docs" className="hover:text-white transition-colors">
               Docs
             </Link>
-            <a href="#faq" className="hover:text-white transition-colors">
-              FAQ
-            </a>
           </nav>
 
           {/* Action CTAs */}
@@ -200,12 +191,12 @@ export default function Home() {
               <GithubIcon className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">GitHub</span>
             </a>
-            <a
-              href="#quickstart"
+            <Link
+              href="/docs#quickstart"
               className="rounded-full bg-white px-3.5 py-1.5 text-[12px] font-medium text-black transition-all hover:bg-neutral-200 active:scale-95 shadow-sm"
             >
               Install
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -707,14 +698,13 @@ export default function Home() {
               <span className="text-neutral-600">Dual-licensed under Apache 2.0 or MIT.</span>
             </Link>
             <div className="flex items-center gap-5 text-neutral-400">
-              <a href={GITHUB_REPO_URL} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
-                GitHub Repository
-              </a>
-              <a href="#overview" className="hover:text-white transition-colors">Overview</a>
-              <a href="#architecture" className="hover:text-white transition-colors">Architecture</a>
-              <a href="#benchmarks" className="hover:text-white transition-colors">Footprint</a>
               <Link href="/catalog" className="hover:text-white transition-colors">Catalog</Link>
-              <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+              <Link href="/docs/templates" className="hover:text-white transition-colors">Templates</Link>
+              <Link href="/docs/integrations" className="hover:text-white transition-colors">Integrations</Link>
+              <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
+              <a href={GITHUB_REPO_URL} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                GitHub
+              </a>
             </div>
           </div>
         </footer>
