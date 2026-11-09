@@ -165,16 +165,10 @@ export default function Home() {
             </span>
           </Link>
 
-          {/* Navigation Links (Dedicated Page Routes Only) */}
+          {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6 text-[13px] text-neutral-400">
             <Link href="/catalog" className="hover:text-white transition-colors">
               Catalog
-            </Link>
-            <Link href="/docs/templates" className="hover:text-white transition-colors">
-              Templates
-            </Link>
-            <Link href="/docs/integrations" className="hover:text-white transition-colors">
-              Integrations
             </Link>
             <Link href="/docs" className="hover:text-white transition-colors">
               Docs
@@ -721,8 +715,6 @@ export default function Home() {
             </Link>
             <div className="flex items-center gap-5 text-neutral-400">
               <Link href="/catalog" className="hover:text-white transition-colors">Catalog</Link>
-              <Link href="/docs/templates" className="hover:text-white transition-colors">Templates</Link>
-              <Link href="/docs/integrations" className="hover:text-white transition-colors">Integrations</Link>
               <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
               <a href={GITHUB_REPO_URL} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
                 GitHub

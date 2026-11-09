@@ -49,7 +49,7 @@ export function Navbar({ activePage = "" }: { activePage?: string }) {
             </div>
           </Link>
 
-          {/* Desktop Nav Links (Clean Dedicated Routes Only) */}
+          {/* Desktop Nav Links (Catalog and Docs Only) */}
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-zinc-400">
             <Link
               href="/catalog"
@@ -66,22 +66,6 @@ export function Navbar({ activePage = "" }: { activePage?: string }) {
               }`}
             >
               Docs
-            </Link>
-            <Link
-              href="/docs/templates"
-              className={`px-3 py-1.5 rounded-md hover:text-white hover:bg-white/[0.05] transition-colors ${
-                activePage === "templates" ? "text-white bg-white/[0.08]" : ""
-              }`}
-            >
-              Templates
-            </Link>
-            <Link
-              href="/docs/integrations"
-              className={`px-3 py-1.5 rounded-md hover:text-white hover:bg-white/[0.05] transition-colors ${
-                activePage === "integrations" ? "text-white bg-white/[0.08]" : ""
-              }`}
-            >
-              Integrations
             </Link>
           </nav>
         </div>
@@ -143,20 +127,6 @@ export function Navbar({ activePage = "" }: { activePage?: string }) {
               className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
             >
               Docs
-            </Link>
-            <Link
-              href="/docs/templates"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
-            >
-              Templates Guide
-            </Link>
-            <Link
-              href="/docs/integrations"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-white/[0.05] text-zinc-300 hover:text-white"
-            >
-              Integrations & Packs Guide
             </Link>
           </div>
           <div className="pt-3 border-t border-white/[0.08] flex items-center gap-3">
