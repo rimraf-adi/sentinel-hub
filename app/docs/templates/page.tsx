@@ -245,7 +245,7 @@ export default function TemplatesDocPage() {
 
             {/* Filter buttons */}
             <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white/[0.03] border border-white/[0.08] rounded-lg text-xs font-medium">
-              {["all", "vision", "sequence", "tabular", "generative", "graph", "experimental"].map((cat) => (
+              {["all", "speech", "vision", "sequence", "tabular", "generative", "graph", "experimental"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
