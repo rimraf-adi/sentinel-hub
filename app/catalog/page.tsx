@@ -723,7 +723,7 @@ parameters:
 
 export default function CatalogPage() {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"all" | "component" | "template">("all");
+  const [activeTab, setActiveTab] = useState<"component" | "template">("component");
   const [activeDomain, setActiveDomain] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null);
@@ -793,7 +793,6 @@ training:
 
   const counts = useMemo(() => {
     return {
-      all: CATALOG_ITEMS.length,
       component: CATALOG_ITEMS.filter((t) => t.kind === "component").length,
       template: CATALOG_ITEMS.filter((t) => t.kind === "template").length,
     };
@@ -801,7 +800,7 @@ training:
 
   const filtered = useMemo(() => {
     return CATALOG_ITEMS.filter((t) => {
-      const matchesKind = activeTab === "all" || t.kind === activeTab;
+      const matchesKind = t.kind === activeTab;
       const matchesDomain =
         activeDomain === "all" || t.domain.toLowerCase() === activeDomain.toLowerCase();
       const q = searchQuery.toLowerCase().trim();
@@ -889,24 +888,14 @@ training:
           </div>
         </div>
 
-        {/* Primary View Toggle: Components vs Templates */}
+        {/* Primary View Toggle: Components vs Templates (Strict 2-Way Division) */}
         <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
             <button
-              onClick={() => setActiveTab("all")}
-              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === "all"
-                  ? "bg-white text-zinc-950 shadow-sm"
-                  : "text-zinc-400 hover:text-white"
-              }`}
-            >
-              All Items ({counts.all})
-            </button>
-            <button
               onClick={() => setActiveTab("component")}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === "component"
-                  ? "bg-white text-zinc-950 shadow-sm"
+                  ? "bg-white text-zinc-950 shadow-sm font-semibold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -915,9 +904,9 @@ training:
             </button>
             <button
               onClick={() => setActiveTab("template")}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === "template"
-                  ? "bg-white text-zinc-950 shadow-sm"
+                  ? "bg-white text-zinc-950 shadow-sm font-semibold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -927,9 +916,8 @@ training:
           </div>
 
           <div className="text-xs font-mono text-zinc-400 hidden sm:block">
-            {activeTab === "all" && "Click any module to inspect interactive architecture diagram"}
-            {activeTab === "component" && "Neural architectures & DAG blocks (sentinel component show)"}
-            {activeTab === "template" && "Ready-to-train blueprints & pipelines (sentinel add)"}
+            {activeTab === "component" && "Neural architectures & DAG blocks (sentinel component show <id>)"}
+            {activeTab === "template" && "Ready-to-train blueprints & pipelines (sentinel add <id>)"}
           </div>
         </div>
 
@@ -1052,7 +1040,7 @@ training:
 
         {filtered.length === 0 && (
           <div className="py-16 text-center text-zinc-500 text-sm font-mono">
-            No {activeTab !== "all" ? activeTab + "s" : "items"} found matching &ldquo;{searchQuery}&rdquo; in domain &ldquo;{activeDomain}&rdquo;.
+            No {activeTab}s found matching &ldquo;{searchQuery}&rdquo; in domain &ldquo;{activeDomain}&rdquo;.
           </div>
         )}
 
