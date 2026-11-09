@@ -1,0 +1,60 @@
+schema_version: "1.0"
+component_id: "speech/marathi-asr@v1"
+name: "Marathi Multi-Dialect MoE ASR"
+description: "Marathi speech recognition trained from scratch featuring 4-dialect Sparse Mixture-of-Experts (Malvani, Ahirani, Varhadi, Standard) with multi-exit CTC decoders"
+domain: "speech"
+defaults:
+  - _self_
+parameters:
+  feat_dim:
+    type: int
+    default: 80
+    range: [40, 160]
+    help: "Log-Mel filterbank channels"
+  d_model:
+    type: int
+    default: 256
+    range: [128, 512]
+    help: "Conformer encoder dimension"
+  num_layers:
+    type: int
+    default: 12
+    range: [4, 24]
+    help: "Total Conformer layers"
+  num_experts:
+    type: int
+    default: 3
+    range: [1, 8]
+    help: "Number of regional dialect experts"
+  vocab_size:
+    type: int
+    default: 113
+    range: [50, 1000]
+    help: "Marathi Devanagari character vocabulary size"
+  phase:
+    type: choice
+    default: "pretrain"
+    options: ["pretrain", "ctc_align", "moe_adapt", "eval"]
+    help: "Training curriculum phase"
+  training.lr:
+    type: float
+    default: 0.0001
+    range: [0.000005, 0.001]
+    help: "Learning rate"
+  training.batch_size:
+    type: int
+    default: 24
+    range: [1, 64]
+    help: "Batch size"
+locked:
+  sampling_rate: 16000
+  tracking.backend: "mlflow"
+sweep:
+  optimizer: "optuna"
+  pruner: "asha"
+  max_trials: 15
+smoke_test:
+  num_layers: 2
+  d_model: 64
+  device: "cpu"
+  batch_size: 2

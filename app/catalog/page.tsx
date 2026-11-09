@@ -209,12 +209,20 @@ const ALL_TEMPLATES = [
     cmd: "sentinel component show graph/gcn-classifier@v1",
   },
   {
-    id: "llm/lora-finetune@v1",
-    name: "LoRA Fine-Tune",
-    domain: "LLM",
-    specs: "Low-Rank Adapter rank=8, alpha=16",
-    desc: "Parameter-efficient fine-tuning adapter for transformer attention projections with frozen base weights.",
-    cmd: "sentinel component check components/llm/lora-finetune.yaml",
+    id: "speech/conformer-ctc@v1",
+    name: "Conformer CTC ASR",
+    domain: "Speech",
+    specs: "Log-Mel Frontend · 12-Layer Conformer · CTC Loss",
+    desc: "End-to-end streaming Conformer ASR trained from scratch with LogMel front-end, SpecAugment, and CTC decoding. Authored by Aditya Kinjawadekar.",
+    cmd: "sentinel add speech/conformer-ctc@v1",
+  },
+  {
+    id: "speech/marathi-asr@v1",
+    name: "Marathi Multi-Dialect MoE ASR",
+    domain: "Speech",
+    specs: "4 Dialects · 3-Expert MoE Trunk · Multi-Exit CTC",
+    desc: "Marathi speech recognition trained from scratch featuring 4-dialect Sparse Mixture-of-Experts (Malvani, Ahirani, Varhadi, Standard) with multi-exit CTC decoders. Authored by Aditya Kinjawadekar.",
+    cmd: "sentinel add speech/marathi-asr@v1",
   },
 ];
 
@@ -296,7 +304,7 @@ export default function CatalogPage() {
 
         {/* Domain Filters */}
         <div className="flex items-center gap-1.5 py-6 overflow-x-auto">
-          {["all", "vision", "tabular", "sequence", "generative", "graph", "llm"].map((domain) => (
+          {["all", "speech", "vision", "tabular", "sequence", "generative", "graph"].map((domain) => (
             <button
               key={domain}
               onClick={() => setActiveDomain(domain)}

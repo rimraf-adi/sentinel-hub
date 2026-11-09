@@ -1,0 +1,70 @@
+schema_version: "1.0"
+component_id: "speech/conformer-ctc@v1"
+name: "Conformer CTC ASR"
+description: "End-to-end streaming Conformer ASR trained from scratch with LogMel frontend, SpecAugment, and CTC decoding"
+domain: "speech"
+defaults:
+  - _self_
+parameters:
+  feat_dim:
+    type: int
+    default: 80
+    range: [40, 160]
+    help: "Input Log-Mel filterbank channels"
+  d_model:
+    type: int
+    default: 256
+    range: [64, 1024]
+    help: "Conformer encoder hidden dimension"
+  num_layers:
+    type: int
+    default: 12
+    range: [2, 36]
+    help: "Number of stacked Conformer blocks"
+  n_heads:
+    type: int
+    default: 4
+    range: [1, 16]
+    help: "Multi-head attention heads"
+  conv_kernel_size:
+    type: int
+    default: 31
+    range: [3, 65]
+    help: "Depthwise convolution kernel size"
+  ffn_expansion:
+    type: int
+    default: 4
+    range: [2, 8]
+    help: "Feed-forward expansion factor"
+  vocab_size:
+    type: int
+    default: 113
+    range: [20, 32000]
+    help: "Acoustic character vocabulary size"
+  dropout:
+    type: float
+    default: 0.1
+    range: [0.0, 0.5]
+    help: "Dropout probability"
+  training.lr:
+    type: float
+    default: 0.0003
+    range: [0.00001, 0.01]
+    help: "AdamW learning rate"
+  training.batch_size:
+    type: int
+    default: 16
+    range: [1, 128]
+    help: "Batch size"
+locked:
+  training.loss: "ctc"
+  tracking.backend: "mlflow"
+sweep:
+  optimizer: "optuna"
+  pruner: "asha"
+  max_trials: 20
+smoke_test:
+  num_layers: 2
+  d_model: 64
+  device: "cpu"
+  batch_size: 2

@@ -130,6 +130,24 @@
       "path": "modules/experimental/mamba-ssm.yaml",
       "description": "Selective state-space model, linear in sequence length",
       "tags": ["experimental", "mamba", "ssm", "state-space"]
+    },
+    {
+      "id": "conformer-ctc",
+      "component_id": "speech/conformer-ctc@v1",
+      "name": "Conformer CTC ASR",
+      "domain": "speech",
+      "path": "modules/speech/conformer-ctc.yaml",
+      "description": "Streaming Conformer ASR trained from scratch with LogMel front-end and CTC decoding",
+      "tags": ["speech", "asr", "conformer", "ctc", "audio", "scratch"]
+    },
+    {
+      "id": "marathi-asr",
+      "component_id": "speech/marathi-asr@v1",
+      "name": "Marathi Multi-Dialect MoE ASR",
+      "domain": "speech",
+      "path": "modules/speech/marathi-asr.yaml",
+      "description": "Marathi speech recognition trained from scratch featuring 4-dialect Sparse Mixture-of-Experts (Malvani, Ahirani, Varhadi, Standard) with multi-exit CTC decoders",
+      "tags": ["speech", "asr", "marathi", "indic", "moe", "conformer", "scratch"]
     }
   ]
 }
