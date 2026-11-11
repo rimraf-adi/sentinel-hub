@@ -238,7 +238,7 @@ export default function IntegrationsDocPage() {
             </div>
 
             {/* 5. Export and Quantization */}
-            <div className="p-6 rounded-xl border border-white/[0.08] bg-[#0b0c10] space-y-4 md:col-span-2">
+            <div className="p-6 rounded-xl border border-white/[0.08] bg-[#0b0c10] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono uppercase px-2.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">
                   deployment
@@ -258,6 +258,31 @@ export default function IntegrationsDocPage() {
                   className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white"
                 >
                   {copiedId === "p-export" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* 6. Telegram Notifier */}
+            <div className="p-6 rounded-xl border border-white/[0.08] bg-[#0b0c10] space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono uppercase px-2.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  notifications
+                </span>
+                <span className="text-xs font-mono text-zinc-500">v1.0.0</span>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white mb-1">Telegram Notifier</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Token-configurable Telegram alerts supporting custom autonomous agent dispatches and hardcoded metric rules (NaN/Inf, loss spikes, grad norms, new bests, and targets).
+                </p>
+              </div>
+              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                <code className="text-xs font-mono text-sky-300">sentinel integrate add telegram-notifier</code>
+                <button
+                  onClick={() => copy("sentinel integrate add telegram-notifier", "p-telegram")}
+                  className="p-1.5 rounded-lg hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                >
+                  {copiedId === "p-telegram" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>

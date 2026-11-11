@@ -1,7 +1,7 @@
 {
   "registry_version": "1.0",
   "space": "sentinel-hub",
-  "updated_at": "2026-11-07T21:20:00Z",
+  "updated_at": "2026-11-11T05:45:00Z",
   "integrations": [
     {
       "name": "xai",
@@ -52,6 +52,15 @@
       "command": "sentinel pack add export-quantization",
       "ui_tab": "export",
       "file": "integrations/export-quantization.yaml"
+    },
+    {
+      "name": "telegram-notifier",
+      "version": "1.0.0",
+      "category": "notifications",
+      "title": "Telegram Notifier",
+      "description": "Token-configurable Telegram alerts for custom agent messages and hardcoded metric rules",
+      "command": "sentinel integrate add telegram-notifier",
+      "file": "integrations/telegram-notifier.yaml"
     }
   ]
 }

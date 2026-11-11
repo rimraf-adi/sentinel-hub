@@ -1,0 +1,38 @@
+schema_version: "1.0"
+name: "telegram-notifier"
+version: "1.0.0"
+title: "Telegram Notifier & Agent Alerts"
+description: "Token-configurable Telegram notifications supporting custom autonomous agent dispatches and hardcoded metric-triggered alerts (NaN/Inf, loss spikes, grad norms, new bests, and targets)."
+category: "notifications"
+config:
+  bot_token: "${TELEGRAM_BOT_TOKEN}"
+  chat_id: "${TELEGRAM_CHAT_ID}"
+  parse_mode: "HTML"
+  notify_on_train_begin: true
+  notify_on_train_end: true
+  epoch_summary_interval: 1
+  step_summary_interval: 0
+  cooldown_seconds: 30
+  rules:
+    nan_guard: true
+    loss_spike_threshold: 10.0
+    loss_spike_multiplier: 2.5
+    max_grad_norm: 10.0
+    min_grad_norm: 1.0e-6
+    max_rtf: 1.0
+    max_latency_ms: 500.0
+    track_best_metrics:
+      - name: "val_loss"
+        mode: "min"
+      - name: "wer"
+        mode: "min"
+      - name: "cer"
+        mode: "min"
+      - name: "val_acc"
+        mode: "max"
+    targets: {}
+sdk_exports:
+  - "sentinel_integration_telegram_notifier.configure"
+  - "sentinel_integration_telegram_notifier.send_message"
+  - "sentinel_integration_telegram_notifier.send_agent_message"
+  - "sentinel_integration_telegram_notifier.evaluate_metrics"
