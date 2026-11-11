@@ -395,7 +395,7 @@ def send_message(
     if not token or not target_chat:
         logger.debug(
             "Telegram Notifier skipped send_message: missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID. "
-            "Run `python .sentinel/integrations/telegram-notifier/hook.py setup` to configure."
+            "Run `uv run python .sentinel/integrations/telegram-notifier/hook.py setup` to configure."
         )
         return False
 
