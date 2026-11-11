@@ -128,6 +128,11 @@ export default function DocsPage() {
                     </a>
                   </li>
                   <li>
+                    <a href="#windows-gpu" className="block py-1 text-zinc-400 hover:text-white transition-colors">
+                      Windows GPU &amp; Tailscale
+                    </a>
+                  </li>
+                  <li>
                     <a href="#architecture" className="block py-1 text-zinc-400 hover:text-white transition-colors">
                       Core Architecture
                     </a>
@@ -236,31 +241,108 @@ export default function DocsPage() {
                 <span>Installation &amp; Quick Start</span>
               </h2>
               <p className="text-sm text-zinc-400">
-                Requires Rust 1.75+, Python 3.10+, and <a href="https://github.com/astral-sh/uv" target="_blank" rel="noreferrer" className="text-sky-400 underline">uv</a>.
+                Requires Rust 1.75+, Python 3.10+, and optionally <a href="https://github.com/astral-sh/uv" target="_blank" rel="noreferrer" className="text-sky-400 underline">uv</a>.
               </p>
 
               <div className="relative rounded-xl bg-[#0b0c10] border border-white/[0.1] p-4 font-mono text-xs text-zinc-200">
                 <button
                   onClick={() => copy("curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash", "install-docs")}
                   className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-white/[0.08] text-zinc-400 hover:text-white"
-                  title="Copy command"
+                  title="Copy macOS/Linux command"
                 >
                   {copiedId === "install-docs" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
                 <pre className="overflow-x-auto text-zinc-300">
-{`# 1. Single-command installer (macOS & Linux)
+{`# macOS & Linux (Bash)
 curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash
 
-# Or via Cargo directly:
+# Or via Cargo directly (any OS):
 cargo install --git https://github.com/rimraf-adi/sentinel.git sentinel-cli
 
-# 2. Launch the supervisor dashboard
+# Launch the supervisor dashboard
 sentinel dev  # active at http://localhost:2512`}
                 </pre>
               </div>
 
+              <div className="relative rounded-xl bg-[#0b0c10] border border-white/[0.1] p-4 font-mono text-xs text-zinc-200">
+                <button
+                  onClick={() => copy("irm https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.ps1 | iex", "install-docs-win")}
+                  className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                  title="Copy Windows PowerShell command"
+                >
+                  {copiedId === "install-docs-win" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <pre className="overflow-x-auto text-zinc-300">
+{`# Windows (PowerShell)
+irm https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.ps1 | iex
+
+# Or cross-compile sentinel.exe from macOS/Linux (requires mingw-w64):
+./scripts/build-windows.sh`}
+                </pre>
+              </div>
+
               <p className="text-xs text-zinc-400">
-                Run <code className="text-sky-300 bg-white/[0.05] px-1.5 py-0.5 rounded font-mono">sentinel doctor</code> to verify your Python and PyTorch runtime environment.
+                Run <code className="text-sky-300 bg-white/[0.05] px-1.5 py-0.5 rounded font-mono">sentinel doctor</code> to verify your Python, PyTorch, and GPU runtime environment.
+              </p>
+            </section>
+
+            {/* Windows GPU & Remote Access */}
+            <section id="windows-gpu" className="space-y-4 pt-6 border-t border-white/[0.08]">
+              <h2 className="text-xl font-medium text-white flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-emerald-400" />
+                <span>Windows GPU &amp; Remote VPS (Tailscale)</span>
+              </h2>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                On Windows GPU machines, verify your NVIDIA driver (<code className="text-zinc-200">nvidia-smi</code>) and install a CUDA-enabled PyTorch build inside a virtual environment before starting training jobs.
+              </p>
+
+              <div className="relative rounded-xl bg-[#0b0c10] border border-white/[0.1] p-4 font-mono text-xs text-zinc-200">
+                <button
+                  onClick={() =>
+                    copy(
+                      "python -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1\npip install torch torchvision --index-url https://download.pytorch.org/whl/cu124\nsentinel init && sentinel doctor && sentinel gpus",
+                      "win-cuda-docs"
+                    )
+                  }
+                  className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                  title="Copy Windows CUDA setup"
+                >
+                  {copiedId === "win-cuda-docs" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <pre className="overflow-x-auto text-zinc-300">
+{`# 1. Create a venv with CUDA PyTorch on Windows PowerShell
+python -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# (Optional if running outside the activated shell)
+$env:SENTINEL_PYTHON = "$PWD\\.venv\\Scripts\\python.exe"
+
+# 2. Initialize project and confirm CUDA + nvidia-smi
+sentinel init
+sentinel doctor
+sentinel gpus`}
+                </pre>
+              </div>
+
+              <div className="relative rounded-xl bg-[#0b0c10] border border-white/[0.1] p-4 font-mono text-xs text-zinc-200">
+                <button
+                  onClick={() => copy("sentinel dev\ntailscale serve --bg http://127.0.0.1:2512", "win-tailscale-docs")}
+                  className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-white/[0.08] text-zinc-400 hover:text-white"
+                  title="Copy Tailscale command"
+                >
+                  {copiedId === "win-tailscale-docs" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <pre className="overflow-x-auto text-zinc-300">
+{`# Keep Sentinel bound to 127.0.0.1 and expose privately over Tailscale HTTPS:
+sentinel dev
+tailscale serve --bg http://127.0.0.1:2512
+tailscale serve status`}
+                </pre>
+              </div>
+
+              <p className="text-xs text-zinc-500">
+                Sentinel&apos;s daemon API has no built-in authentication. Use <code className="text-zinc-300">tailscale serve</code> (private tailnet only) or an SSH tunnel (<code className="text-zinc-300">ssh -L 2512:127.0.0.1:2512 user@host</code>) rather than public <code className="text-zinc-300">tailscale funnel</code> or <code className="text-zinc-300">0.0.0.0</code>.
               </p>
             </section>
 

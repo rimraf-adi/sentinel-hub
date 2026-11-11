@@ -114,11 +114,14 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 
 const GITHUB_REPO_URL = "https://github.com/rimraf-adi/sentinel";
 const CURL_INSTALL_CMD = "curl -fsSL https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.sh | bash";
+const PS_INSTALL_CMD = "irm https://raw.githubusercontent.com/rimraf-adi/sentinel/main/install.ps1 | iex";
 const CARGO_INSTALL_CMD = "cargo install --git https://github.com/rimraf-adi/sentinel.git sentinel-cli";
 
 export default function Home() {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
+  const [installOs, setInstallOs] = useState<"unix" | "windows">("unix");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const activeInstallCmd = installOs === "windows" ? PS_INSTALL_CMD : CURL_INSTALL_CMD;
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -227,13 +230,35 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.18, ease: "easeOut" }}
             className="mt-8 mx-auto max-w-xl"
           >
+            <div className="mb-2.5 flex items-center justify-center gap-1.5 text-[11px] font-mono">
+              <button
+                onClick={() => setInstallOs("unix")}
+                className={`rounded-full px-3 py-1 transition-all border ${
+                  installOs === "unix"
+                    ? "border-sky-400/40 bg-sky-500/10 text-sky-300"
+                    : "border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white"
+                }`}
+              >
+                macOS / Linux
+              </button>
+              <button
+                onClick={() => setInstallOs("windows")}
+                className={`rounded-full px-3 py-1 transition-all border ${
+                  installOs === "windows"
+                    ? "border-sky-400/40 bg-sky-500/10 text-sky-300"
+                    : "border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white"
+                }`}
+              >
+                Windows (PowerShell)
+              </button>
+            </div>
             <div className="relative flex items-center justify-between rounded-xl border border-white/10 bg-[#0d0d12]/95 px-4 py-2.5 shadow-2xl backdrop-blur-md">
               <div className="flex items-center gap-3 overflow-x-auto text-xs sm:text-sm font-mono text-neutral-200">
-                <span className="text-sky-400 font-bold">$</span>
-                <span className="whitespace-nowrap">{CURL_INSTALL_CMD}</span>
+                <span className="text-sky-400 font-bold">{installOs === "windows" ? "PS>" : "$"}</span>
+                <span className="whitespace-nowrap">{activeInstallCmd}</span>
               </div>
               <button
-                onClick={() => copyToClipboard(CURL_INSTALL_CMD, "install-cmd")}
+                onClick={() => copyToClipboard(activeInstallCmd, "install-cmd")}
                 className="ml-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-neutral-300 hover:border-white/20 hover:text-white transition-all flex-shrink-0"
               >
                 {copiedCmd === "install-cmd" ? (
@@ -249,7 +274,7 @@ export default function Home() {
                 )}
               </button>
             </div>
-            <div className="mt-2.5 flex items-center justify-center gap-3 text-[11px] font-mono text-neutral-500">
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-mono text-neutral-500">
               <span>Or via Cargo:</span>
               <button
                 onClick={() => copyToClipboard(CARGO_INSTALL_CMD, "cargo-copy")}
@@ -257,6 +282,10 @@ export default function Home() {
               >
                 {copiedCmd === "cargo-copy" ? "Copied cargo command!" : "cargo install sentinel-cli"}
               </button>
+              <span className="text-neutral-700">·</span>
+              <Link href="/docs#windows-gpu" className="hover:text-sky-300 transition-colors underline decoration-white/20">
+                Windows GPU &amp; Tailscale guide
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -573,20 +602,46 @@ export default function Home() {
       {/* 6. Quick Start Workflow (From README.md) */}
       <section className="relative py-20 border-t border-white/[0.06] bg-[#08080c]">
         <div className="mx-auto max-w-5xl px-6">
-          <div className="max-w-xl mb-10">
-            <span className="text-xs font-mono tracking-widest text-neutral-400 uppercase">CLI WORKFLOW</span>
-            <h2 className="mt-2 text-2xl sm:text-3xl font-normal tracking-tight text-white">
-              Quick Start
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div className="max-w-xl">
+              <span className="text-xs font-mono tracking-widest text-neutral-400 uppercase">CLI WORKFLOW</span>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-normal tracking-tight text-white">
+                Quick Start
+              </h2>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] font-mono">
+              <button
+                onClick={() => setInstallOs("unix")}
+                className={`rounded-full px-3 py-1 transition-all border ${
+                  installOs === "unix"
+                    ? "border-sky-400/40 bg-sky-500/10 text-sky-300"
+                    : "border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white"
+                }`}
+              >
+                macOS / Linux
+              </button>
+              <button
+                onClick={() => setInstallOs("windows")}
+                className={`rounded-full px-3 py-1 transition-all border ${
+                  installOs === "windows"
+                    ? "border-sky-400/40 bg-sky-500/10 text-sky-300"
+                    : "border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white"
+                }`}
+              >
+                Windows
+              </button>
+            </div>
           </div>
 
           <div className="rounded-xl border border-white/10 bg-[#0c0d12] p-5 font-mono text-xs space-y-4">
             <div>
-              <div className="text-neutral-500 mb-1"># 1. Install Sentinel CLI and daemon</div>
+              <div className="text-neutral-500 mb-1">
+                # 1. Install Sentinel CLI and daemon ({installOs === "windows" ? "PowerShell" : "Bash"})
+              </div>
               <div className="p-3 rounded-lg bg-black/50 border border-white/5 flex items-center justify-between text-neutral-200">
-                <span className="truncate">{CURL_INSTALL_CMD}</span>
+                <span className="truncate">{activeInstallCmd}</span>
                 <button
-                  onClick={() => copyToClipboard(CURL_INSTALL_CMD, "qs-1")}
+                  onClick={() => copyToClipboard(activeInstallCmd, "qs-1")}
                   className="ml-2 text-neutral-400 hover:text-white"
                 >
                   {copiedCmd === "qs-1" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -689,10 +744,10 @@ export default function Home() {
 
           <div className="mt-7 flex justify-center">
             <div className="flex items-center gap-3 rounded-full border border-white/15 bg-neutral-900/90 px-4 py-2 shadow-xl">
-              <span className="font-mono text-xs text-sky-400 font-bold">$</span>
-              <code className="font-mono text-xs text-white">{CURL_INSTALL_CMD}</code>
+              <span className="font-mono text-xs text-sky-400 font-bold">{installOs === "windows" ? "PS>" : "$"}</span>
+              <code className="font-mono text-xs text-white">{activeInstallCmd}</code>
               <button
-                onClick={() => copyToClipboard(CURL_INSTALL_CMD, "final-install")}
+                onClick={() => copyToClipboard(activeInstallCmd, "final-install")}
                 className="ml-2 text-neutral-400 hover:text-white"
               >
                 {copiedCmd === "final-install" ? (
