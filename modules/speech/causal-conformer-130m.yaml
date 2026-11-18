@@ -1,0 +1,74 @@
+schema_version: "1.0"
+component_id: "speech/causal-conformer-130m@v1"
+name: "Causal Conformer 130M Real-Time Streaming ASR"
+description: "Strictly causal 130M Conformer ASR with zero future lookahead, per-frame LayerNorm, streaming K/V and depthwise convolution caching, and incremental CTC decoding"
+domain: "speech"
+defaults:
+  - _self_
+
+parameters:
+  feat_dim:
+    type: int
+    default: 80
+    range: [40, 160]
+    help: "Log-Mel filterbank channels (causal framing, no centered future padding)"
+  d_model:
+    type: int
+    default: 512
+    range: [128, 1024]
+    help: "Conformer encoder hidden dimension"
+  num_layers:
+    type: int
+    default: 12
+    range: [4, 24]
+    help: "Total Conformer encoder layers"
+  n_heads:
+    type: int
+    default: 8
+    range: [4, 16]
+    help: "Multi-head causal self-attention heads"
+  conv_kernel_size:
+    type: int
+    default: 31
+    range: [7, 63]
+    help: "Causal depthwise convolution kernel size (left padding K-1)"
+  num_experts:
+    type: int
+    default: 3
+    range: [1, 8]
+    help: "Regional dialect experts in layers 5-12"
+  vocab_size:
+    type: int
+    default: 105
+    range: [50, 500]
+    help: "Marathi Devanagari character vocabulary size"
+  left_context_frames:
+    type: int
+    default: 128
+    range: [16, 512]
+    help: "Attention left context window size (zero future lookahead)"
+  chunk_size_ms:
+    type: int
+    default: 160
+    range: [40, 1000]
+    help: "Real-time streaming chunk interval in milliseconds"
+  phase:
+    type: choice
+    default: "eval"
+    options: ["eval", "finetune", "streaming_serve"]
+    help: "Operational phase"
+
+locked:
+  sampling_rate: 16000
+  tracking.backend: "mlflow"
+  causality.lookahead_frames: 0
+  causality.attention_mask: "strictly_causal"
+  causality.convolution_padding: "left_only"
+  causality.normalization: "per_frame_layer_norm"
+
+smoke_test:
+  num_layers: 2
+  d_model: 64
+  n_heads: 4
+  conv_kernel_size: 15
+  batch_size: 1

@@ -1,153 +1,250 @@
 {
-  "name": "Sentinel Hub Registry",
-  "version": "1.0",
   "cdn_base": "https://raw.githubusercontent.com/rimraf-adi/sentinel-hub/main",
-  "repository": "https://github.com/rimraf-adi/sentinel-hub",
   "description": "Model templates, reusable blocks, and capability packs for Sentinel ML training control plane",
   "modules": [
     {
-      "id": "vit-tiny",
       "component_id": "vision/vit-tiny@v1",
-      "name": "ViT Tiny",
-      "domain": "vision",
-      "path": "modules/vision/vit-tiny.yaml",
       "description": "Vision transformer for image classification",
-      "tags": ["vision", "transformer", "attention", "classification"]
+      "domain": "vision",
+      "id": "vit-tiny",
+      "name": "ViT Tiny",
+      "path": "modules/vision/vit-tiny.yaml",
+      "tags": [
+        "vision",
+        "transformer",
+        "attention",
+        "classification"
+      ]
     },
     {
-      "id": "unet",
       "component_id": "vision/unet@v1",
-      "name": "U-Net",
-      "domain": "vision",
-      "path": "modules/vision/unet.yaml",
       "description": "Encoder-decoder with skip connections for segmentation",
-      "tags": ["vision", "segmentation", "skip-connections", "unet"]
+      "domain": "vision",
+      "id": "unet",
+      "name": "U-Net",
+      "path": "modules/vision/unet.yaml",
+      "tags": [
+        "vision",
+        "segmentation",
+        "skip-connections",
+        "unet"
+      ]
     },
     {
-      "id": "resnet-mini",
       "component_id": "vision/resnet-mini@v1",
-      "name": "ResNet Mini",
-      "domain": "vision",
-      "path": "modules/vision/resnet-mini.yaml",
       "description": "Residual convolutional network",
-      "tags": ["vision", "residual", "convolution", "resnet"]
-    },
-    {
-      "id": "cnn-classifier",
-      "component_id": "vision/cnn-classifier@v1",
-      "name": "CNN Classifier",
       "domain": "vision",
-      "path": "modules/vision/cnn-classifier.yaml",
+      "id": "resnet-mini",
+      "name": "ResNet Mini",
+      "path": "modules/vision/resnet-mini.yaml",
+      "tags": [
+        "vision",
+        "residual",
+        "convolution",
+        "resnet"
+      ]
+    },
+    {
+      "component_id": "vision/cnn-classifier@v1",
       "description": "Convolutional baseline with batch normalization",
-      "tags": ["vision", "cnn", "classification", "baseline"]
+      "domain": "vision",
+      "id": "cnn-classifier",
+      "name": "CNN Classifier",
+      "path": "modules/vision/cnn-classifier.yaml",
+      "tags": [
+        "vision",
+        "cnn",
+        "classification",
+        "baseline"
+      ]
     },
     {
-      "id": "transformer-classifier",
       "component_id": "sequence/transformer-classifier@v1",
-      "name": "Transformer Classifier",
-      "domain": "sequence",
-      "path": "modules/sequence/transformer-classifier.yaml",
       "description": "Multi-head attention classifier",
-      "tags": ["sequence", "transformer", "attention", "classification"]
-    },
-    {
-      "id": "lstm-classifier",
-      "component_id": "sequence/lstm-classifier@v1",
-      "name": "LSTM Classifier",
       "domain": "sequence",
-      "path": "modules/sequence/lstm-classifier.yaml",
+      "id": "transformer-classifier",
+      "name": "Transformer Classifier",
+      "path": "modules/sequence/transformer-classifier.yaml",
+      "tags": [
+        "sequence",
+        "transformer",
+        "attention",
+        "classification"
+      ]
+    },
+    {
+      "component_id": "sequence/lstm-classifier@v1",
       "description": "Recurrent baseline for text and time series",
-      "tags": ["sequence", "lstm", "recurrent", "time-series"]
+      "domain": "sequence",
+      "id": "lstm-classifier",
+      "name": "LSTM Classifier",
+      "path": "modules/sequence/lstm-classifier.yaml",
+      "tags": [
+        "sequence",
+        "lstm",
+        "recurrent",
+        "time-series"
+      ]
     },
     {
-      "id": "residual-mlp",
       "component_id": "tabular/residual-mlp@v1",
-      "name": "Residual MLP",
-      "domain": "tabular",
-      "path": "modules/tabular/residual-mlp.yaml",
       "description": "Residual network with layer normalization",
-      "tags": ["tabular", "mlp", "residual", "classification"]
+      "domain": "tabular",
+      "id": "residual-mlp",
+      "name": "Residual MLP",
+      "path": "modules/tabular/residual-mlp.yaml",
+      "tags": [
+        "tabular",
+        "mlp",
+        "residual",
+        "classification"
+      ]
     },
     {
-      "id": "deep-residual-mlp",
       "component_id": "tabular/deep-residual-mlp@v1",
-      "name": "Deep Residual MLP",
-      "domain": "tabular",
-      "path": "modules/tabular/deep-residual-mlp.yaml",
       "description": "Multi-stage residual network for structured data",
-      "tags": ["tabular", "deep", "residual", "multi-stage"]
-    },
-    {
-      "id": "ann-classifier",
-      "component_id": "tabular/ann-classifier@v1",
-      "name": "ANN Classifier",
       "domain": "tabular",
-      "path": "modules/tabular/ann-classifier.yaml",
+      "id": "deep-residual-mlp",
+      "name": "Deep Residual MLP",
+      "path": "modules/tabular/deep-residual-mlp.yaml",
+      "tags": [
+        "tabular",
+        "deep",
+        "residual",
+        "multi-stage"
+      ]
+    },
+    {
+      "component_id": "tabular/ann-classifier@v1",
       "description": "Dense feed-forward baseline",
-      "tags": ["tabular", "dense", "baseline", "classification"]
+      "domain": "tabular",
+      "id": "ann-classifier",
+      "name": "ANN Classifier",
+      "path": "modules/tabular/ann-classifier.yaml",
+      "tags": [
+        "tabular",
+        "dense",
+        "baseline",
+        "classification"
+      ]
     },
     {
-      "id": "vae",
       "component_id": "generative/vae@v1",
-      "name": "Variational Autoencoder",
-      "domain": "generative",
-      "path": "modules/generative/vae.yaml",
       "description": "Latent-variable model with Gaussian reparameterization",
-      "tags": ["generative", "vae", "latent", "gaussian"]
-    },
-    {
-      "id": "gan",
-      "component_id": "generative/gan@v1",
-      "name": "GAN",
       "domain": "generative",
-      "path": "modules/generative/gan.yaml",
+      "id": "vae",
+      "name": "Variational Autoencoder",
+      "path": "modules/generative/vae.yaml",
+      "tags": [
+        "generative",
+        "vae",
+        "latent",
+        "gaussian"
+      ]
+    },
+    {
+      "component_id": "generative/gan@v1",
       "description": "Generator and discriminator with alternating updates",
-      "tags": ["generative", "gan", "adversarial", "synthesis"]
+      "domain": "generative",
+      "id": "gan",
+      "name": "GAN",
+      "path": "modules/generative/gan.yaml",
+      "tags": [
+        "generative",
+        "gan",
+        "adversarial",
+        "synthesis"
+      ]
     },
     {
-      "id": "gcn-classifier",
       "component_id": "graph/gcn-classifier@v1",
-      "name": "GCN Classifier",
-      "domain": "graph",
-      "path": "modules/graph/gcn-classifier.yaml",
       "description": "Graph convolution for node and graph classification",
-      "tags": ["graph", "gcn", "spectral", "node-classification"]
+      "domain": "graph",
+      "id": "gcn-classifier",
+      "name": "GCN Classifier",
+      "path": "modules/graph/gcn-classifier.yaml",
+      "tags": [
+        "graph",
+        "gcn",
+        "spectral",
+        "node-classification"
+      ]
     },
     {
-      "id": "kan-linear",
       "component_id": "experimental/kan-linear@v1",
-      "name": "KAN Linear",
-      "domain": "experimental",
-      "path": "modules/experimental/kan-linear.yaml",
       "description": "Learnable spline activations",
-      "tags": ["experimental", "kan", "spline", "activations"]
-    },
-    {
-      "id": "mamba-ssm",
-      "component_id": "experimental/mamba-ssm@v1",
-      "name": "Mamba SSM",
       "domain": "experimental",
-      "path": "modules/experimental/mamba-ssm.yaml",
+      "id": "kan-linear",
+      "name": "KAN Linear",
+      "path": "modules/experimental/kan-linear.yaml",
+      "tags": [
+        "experimental",
+        "kan",
+        "spline",
+        "activations"
+      ]
+    },
+    {
+      "component_id": "experimental/mamba-ssm@v1",
       "description": "Selective state-space model, linear in sequence length",
-      "tags": ["experimental", "mamba", "ssm", "state-space"]
+      "domain": "experimental",
+      "id": "mamba-ssm",
+      "name": "Mamba SSM",
+      "path": "modules/experimental/mamba-ssm.yaml",
+      "tags": [
+        "experimental",
+        "mamba",
+        "ssm",
+        "state-space"
+      ]
     },
     {
-      "id": "conformer-ctc",
       "component_id": "speech/conformer-ctc@v1",
-      "name": "Conformer CTC ASR",
-      "domain": "speech",
-      "path": "modules/speech/conformer-ctc.yaml",
       "description": "Streaming Conformer ASR trained from scratch with LogMel front-end and CTC decoding",
-      "tags": ["speech", "asr", "conformer", "ctc", "audio", "scratch"]
+      "domain": "speech",
+      "id": "conformer-ctc",
+      "name": "Conformer CTC ASR",
+      "path": "modules/speech/conformer-ctc.yaml",
+      "tags": [
+        "speech",
+        "asr",
+        "conformer",
+        "ctc",
+        "audio",
+        "scratch"
+      ]
     },
     {
-      "id": "marathi-asr",
       "component_id": "speech/marathi-asr@v1",
-      "name": "Marathi Multi-Dialect MoE ASR",
-      "domain": "speech",
-      "path": "modules/speech/marathi-asr.yaml",
       "description": "Marathi speech recognition trained from scratch featuring 4-dialect Sparse Mixture-of-Experts (Malvani, Ahirani, Varhadi, Standard) with multi-exit CTC decoders",
-      "tags": ["speech", "asr", "marathi", "indic", "moe", "conformer", "scratch"]
+      "domain": "speech",
+      "id": "marathi-asr",
+      "name": "Marathi Multi-Dialect MoE ASR",
+      "path": "modules/speech/marathi-asr.yaml",
+      "tags": [
+        "speech",
+        "asr",
+        "marathi",
+        "indic",
+        "moe",
+        "conformer",
+        "scratch"
+      ]
+    },
+    {
+      "component_id": "speech/causal-conformer-130m@v1",
+      "description": "Strictly causal 130M Conformer ASR with zero future lookahead, per-frame LayerNorm, streaming K/V and depthwise convolution caching, and incremental CTC decoding",
+      "domain": "speech",
+      "id": "causal-conformer-130m",
+      "name": "Causal Conformer 130M Real-Time Streaming ASR",
+      "path": "modules/speech/causal-conformer-130m.yaml",
+      "tags": [
+        "speech",
+        "causal-conformer-130m"
+      ]
     }
-  ]
+  ],
+  "name": "Sentinel Hub Registry",
+  "repository": "https://github.com/rimraf-adi/sentinel-hub",
+  "version": "1.0"
 }
